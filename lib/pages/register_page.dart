@@ -1,22 +1,22 @@
 import 'package:flutter/material.dart';
 import 'package:running/components/button.dart';
 import 'package:running/components/text_field.dart';
-// import 'package:running/pages/login_page.dart';
 
-class LoginPage extends StatefulWidget {
+class RegisterPage extends StatefulWidget {
   final Function()? onTap;
-  const LoginPage({
+  const RegisterPage({
     super.key,
     required this.onTap,
   });
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  State<RegisterPage> createState() => _RegisterPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _RegisterPageState extends State<RegisterPage> {
   final emailTextController = TextEditingController();
   final passwordTextController = TextEditingController();
+  final confirmPasswordTextController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -50,22 +50,29 @@ class _LoginPageState extends State<LoginPage> {
                 MyTextField(
                   controller: emailTextController,
                   hintText: "이메일 입력",
+                  obscureText: true,
+                ),
+                const SizedBox(height: 10),
+                MyTextField(
+                  controller: passwordTextController,
+                  hintText: "비밀번호 입력",
                   obscureText: false,
                 ),
                 const SizedBox(height: 10),
                 MyTextField(
-                  controller: emailTextController,
-                  hintText: "비밀번호 입력",
+                  controller: confirmPasswordTextController,
+                  hintText: "비밀번호 확인",
                   obscureText: true,
                 ),
                 const SizedBox(height: 30),
-                MyButton(onTap: () {}, text: "로그인"),
+
+                MyButton(onTap: () {}, text: "회원가입"),
                 const SizedBox(height: 10),
                 Row(
                   mainAxisAlignment: MainAxisAlignment.center,
                   children: [
                     Text(
-                      "회원이 아니신가요?",
+                      "이미 회원이십니까?",
                       style: TextStyle(
                         color: Colors.grey[700],
                       ),
@@ -73,8 +80,8 @@ class _LoginPageState extends State<LoginPage> {
                     const SizedBox(width: 4),
                     GestureDetector(
                       onTap: widget.onTap,
-                      child: Text(
-                        "회원가입",
+                      child: const Text(
+                        "로그인",
                         style: TextStyle(
                           fontWeight: FontWeight.bold,
                           color: Colors.blue,

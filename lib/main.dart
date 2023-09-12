@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
-import 'package:running/pages/login_page.dart';
-import 'package:running/pages/start_page.dart';
+import 'package:running/auth/login_or_register.dart';
+// import 'package:running/pages/login_page.dart';
+// import 'package:running/pages/register_page.dart';
 
 void main() {
   runApp(const MyApp());
@@ -11,14 +12,11 @@ class MyApp extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return MaterialApp(
-      theme: ThemeData(useMaterial3: true),
+    return const MaterialApp(
       debugShowCheckedModeBanner: false,
-      initialRoute: '/start',
-      routes: {
-        '/start': (context) => const StartPage(),
-        '/login': (context) => const LoginPage(),
-      },
+      // theme: ThemeData(useMaterial3: true),
+      // initialRoute: '/start',
+      home: LoginOrRegister(),
       // home: const StartPage(),
     );
   }
