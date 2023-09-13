@@ -1,7 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:running/components/drawer.dart';
+import 'package:running/pages/add_crew_page.dart';
+// import 'package:running/components/navigation.dart';
+import 'package:running/pages/profile_page.dart';
 
 class MyHomePage extends StatefulWidget {
-  const MyHomePage({super.key});
+  final void Function()? addCrewTap;
+  const MyHomePage({
+    super.key,
+    required this.addCrewTap,
+  });
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -9,7 +18,34 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   bool isClick = true; // 클릭했을 때 색상 변경위한 변수
-  int selectedIndex = 0; // 네비게이션바 인덱스
+
+  void signOut() {
+    FirebaseAuth.instance.signOut();
+  }
+
+  void goToProfilePage() {
+    // pop menu drawer
+    Navigator.pop(context);
+
+    // go to profile page
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const MyProfilePage(),
+      ),
+    );
+  }
+
+  // void addCrewPage() {
+  //   Navigator.pop(context);
+  //   Navigator.push(
+  //     context,
+  //     MaterialPageRoute(
+  //       builder: (context) => const MyAddCrew(),
+  //     ),
+  //   );
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -23,13 +59,25 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
         ),
         centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.grey[850]),
         shape: const Border(
           bottom: BorderSide(
             color: Colors.grey,
             width: 0.3,
           ),
         ),
+        actions: [
+          IconButton(
+            onPressed: signOut,
+            icon: const Icon(Icons.logout),
+          ),
+        ],
       ),
+      drawer: MyDrawer(
+        onProfileTap: goToProfilePage,
+        onSignOut: signOut,
+      ),
+
       body: Column(
         children: [
           Padding(
@@ -91,6 +139,12 @@ class _MyHomePageState extends State<MyHomePage> {
             ),
           ),
         ],
+      ),
+
+      // 게시글 추가 버튼
+      floatingActionButton: FloatingActionButton(
+        onPressed: () {},
+        child: const Icon(Icons.add),
       ),
     );
   }
