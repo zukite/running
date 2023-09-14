@@ -6,10 +6,8 @@ import 'package:running/pages/add_crew_page.dart';
 import 'package:running/pages/profile_page.dart';
 
 class MyHomePage extends StatefulWidget {
-  final void Function()? addCrewTap;
   const MyHomePage({
     super.key,
-    required this.addCrewTap,
   });
 
   @override
@@ -36,15 +34,18 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  // void addCrewPage() {
-  //   Navigator.pop(context);
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => const MyAddCrew(),
-  //     ),
-  //   );
-  // }
+  void goToAddCrewPage() {
+    // pop menu drawer
+    Navigator.pop(context);
+
+    // go to profile page
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const MyAddCrew(),
+      ),
+    );
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -66,12 +67,6 @@ class _MyHomePageState extends State<MyHomePage> {
             width: 0.3,
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: signOut,
-            icon: const Icon(Icons.logout),
-          ),
-        ],
       ),
       drawer: MyDrawer(
         onProfileTap: goToProfilePage,
@@ -143,7 +138,18 @@ class _MyHomePageState extends State<MyHomePage> {
 
       // 게시글 추가 버튼
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          // pop menu drawer
+          Navigator.pop(context);
+
+          // go to profile page
+          Navigator.push(
+            context,
+            MaterialPageRoute(
+              builder: (context) => const MyProfilePage(),
+            ),
+          );
+        },
         child: const Icon(Icons.add),
       ),
     );
