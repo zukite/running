@@ -12,7 +12,17 @@ class _MyAddCrewState extends State<MyAddCrew> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text("크루 개설"),
+        backgroundColor: Colors.grey[50],
+        iconTheme: IconThemeData(
+          color: Colors.grey[850],
+        ),
+        title: Text(
+          "크루 개설",
+          style: TextStyle(
+            color: Colors.grey[850],
+          ),
+        ),
+        elevation: 0,
       ),
     );
   }

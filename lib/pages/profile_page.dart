@@ -12,7 +12,17 @@ class _MyProfilePageState extends State<MyProfilePage> {
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: const Text("test"),
+        backgroundColor: Colors.grey[50],
+        iconTheme: IconThemeData(
+          color: Colors.grey[850],
+        ),
+        title: Text(
+          "마이페이지",
+          style: TextStyle(
+            color: Colors.grey[850],
+          ),
+        ),
+        elevation: 0,
       ),
     );
   }

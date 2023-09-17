@@ -2,15 +2,10 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:running/components/drawer.dart';
 import 'package:running/pages/add_crew_page.dart';
-// import 'package:running/components/navigation.dart';
 import 'package:running/pages/profile_page.dart';
 
 class MyHomePage extends StatefulWidget {
-  final void Function()? addCrewTap;
-  const MyHomePage({
-    super.key,
-    required this.addCrewTap,
-  });
+  const MyHomePage({super.key});
 
   @override
   State<MyHomePage> createState() => _MyHomePageState();
@@ -36,21 +31,11 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  // void addCrewPage() {
-  //   Navigator.pop(context);
-  //   Navigator.push(
-  //     context,
-  //     MaterialPageRoute(
-  //       builder: (context) => const MyAddCrew(),
-  //     ),
-  //   );
-  // }
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        backgroundColor: Colors.white,
+        backgroundColor: Colors.grey[50],
         elevation: 0,
         title: const Text(
           "신사동",
@@ -77,7 +62,6 @@ class _MyHomePageState extends State<MyHomePage> {
         onProfileTap: goToProfilePage,
         onSignOut: signOut,
       ),
-
       body: Column(
         children: [
           Padding(
@@ -143,7 +127,11 @@ class _MyHomePageState extends State<MyHomePage> {
 
       // 게시글 추가 버튼
       floatingActionButton: FloatingActionButton(
-        onPressed: () {},
+        onPressed: () {
+          Navigator.of(context).push(
+            MaterialPageRoute(builder: (context) => const MyAddCrew()),
+          );
+        },
         child: const Icon(Icons.add),
       ),
     );
