@@ -31,6 +31,19 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void goToAddCrewPage() {
+    // pop menu drawer
+    Navigator.pop(context);
+
+    // go to profile page
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const MyAddCrew(),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -51,12 +64,6 @@ class _MyHomePageState extends State<MyHomePage> {
             width: 0.3,
           ),
         ),
-        actions: [
-          IconButton(
-            onPressed: signOut,
-            icon: const Icon(Icons.logout),
-          ),
-        ],
       ),
       drawer: MyDrawer(
         onProfileTap: goToProfilePage,
