@@ -1,5 +1,6 @@
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:running/pages/profile_modify.dart';
 
 class MyProfilePage extends StatefulWidget {
   const MyProfilePage({super.key});
@@ -11,6 +12,7 @@ class MyProfilePage extends StatefulWidget {
 class _MyProfilePageState extends State<MyProfilePage> {
   // 사용자 정보
   final currentUser = FirebaseAuth.instance.currentUser!;
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -28,34 +30,38 @@ class _MyProfilePageState extends State<MyProfilePage> {
             icon: const Icon(Icons.notifications),
           ),
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(
+                    builder: (context) => const MyProfileModify()),
+              );
+            },
             icon: const Icon(Icons.settings),
           ),
         ],
       ),
-      body: Container(
-        child: Row(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            const Padding(
-              padding: EdgeInsets.fromLTRB(30, 30, 0, 0),
-              child: CircleAvatar(
-                radius: 55,
-              ),
+      body: Row(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          const Padding(
+            padding: EdgeInsets.fromLTRB(30, 30, 0, 0),
+            child: CircleAvatar(
+              radius: 55,
+              backgroundColor: Colors.grey,
             ),
-            Center(
-              child: Column(
-                children: [
-                  Padding(
-                    padding: const EdgeInsets.fromLTRB(40, 55, 0, 20),
-                    child: Text(currentUser.email!.split("@")[0]),
-                  ),
-                  Text("동네이름"),
-                ],
-              ),
-            )
-          ],
-        ),
+          ),
+          Center(
+            child: Column(
+              children: [
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(40, 55, 0, 20),
+                  child: Text(currentUser.email!.split("@")[0]),
+                ),
+                Text("동네이름"),
+              ],
+            ),
+          )
+        ],
       ),
     );
   }
