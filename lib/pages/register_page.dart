@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:running/components/button.dart';
@@ -54,22 +55,22 @@ class _RegisterPageState extends State<RegisterPage> {
 
     // try creating the user
     try {
-      //     // create the user
-      //     UserCredential userCredential =
-      await FirebaseAuth.instance.createUserWithEmailAndPassword(
+      // 사용자 생성
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
         email: emailTextController.text,
         password: passwordTextController.text,
       );
 
-      //     // after creating the user, create a new document in cloud firestore called Users
-      //     FirebaseFirestore.instance
-      //         .collection("User")
-      //         .doc(userCredential.user!.email)
-      //         .set({
-      //       'username': emailTextController.text.split("@")[0], // initial username
-      //       'bio': 'Empty bio..' // initially empty bio
-      //       // add any additional fields as needed
-      //     });
+      //     // 사용자 생성 후,  파이어베이스에 새 문서를 만들고 이를 사용자라고 칭함
+      FirebaseFirestore.instance
+          .collection("User")
+          .doc(userCredential.user!.email)
+          .set({
+        'username': emailTextController.text.split("@")[0],
+        'userregion': '동대문구' // initially empty bio
+        // add any additional fields as needed
+      });
 
       // pop loding circle
       if (context.mounted) Navigator.pop(context);
