@@ -1,5 +1,7 @@
-// import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:running/pages/profile_modify.dart';
 
@@ -14,6 +16,20 @@ class _MyProfilePageState extends State<MyProfilePage> {
   // 사용자 정보
   final currentUser = FirebaseAuth.instance.currentUser!;
   bool isJoinClick = true;
+  final currentUserNickname = FirebaseFirestore.instance
+      .collection("User")
+      .doc(currentUser.email)
+      .get();
+
+  Future<void> getUserName() async {
+    DocumentSnapshot currentUserName = await FirebaseFirestore.instance
+        .collection("User")
+        .doc(currentUser.email)
+        .get();
+    setState(() {
+      currentUserNickname = currentUserName["username"];
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -80,16 +96,14 @@ class _MyProfilePageState extends State<MyProfilePage> {
                 const SizedBox(
                   width: 30.0,
                 ),
-                const Column(
+                Column(
                   children: [
-                    SizedBox(
+                    const SizedBox(
                       height: 25.0,
                     ),
                     Text(
-                      "닉네임",
-                      style: TextStyle(
-                        fontSize: 15.0,
-                      ),
+                      currentUser.email!,
+                      style: TextStyle(fontSize: 15.0, color: Colors.grey[850]),
                     ),
                     SizedBox(
                       height: 10.0,
