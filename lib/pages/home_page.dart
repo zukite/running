@@ -158,28 +158,8 @@ class _MyHomePageState extends State<MyHomePage> {
           );
         },
         child: const Icon(Icons.add),
+        elevation: 0.0,
       ),
     );
   }
 }
-
-/*
-AppBar(
-        backgroundColor: Colors.grey[50],
-        elevation: 0,
-        title: const Text(
-          "신사동",
-          style: TextStyle(
-            color: Colors.black,
-          ),
-        ),
-        centerTitle: true,
-        iconTheme: IconThemeData(color: Colors.grey[850]),
-        shape: const Border(
-          bottom: BorderSide(
-            color: Colors.grey,
-            width: 0.3,
-          ),
-        ),
-      ),
-*/
