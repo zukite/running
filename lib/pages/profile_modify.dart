@@ -17,9 +17,6 @@ class _MyProfileModifyState extends State<MyProfileModify> {
   // 모든 사용자
   final userCollection = FirebaseFirestore.instance.collection("User");
 
-  // 컬렉션 값 가져오기
-  // final userNickname= FirebaseFirestore.instance.collection("User").doc().
-
   // 닉네임 수정 함수
   Future<void> editField(String field) async {
     String newValue = "";

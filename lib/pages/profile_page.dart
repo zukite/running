@@ -1,7 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:running/pages/profile_modify.dart';
 
@@ -16,20 +14,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
   // 사용자 정보
   final currentUser = FirebaseAuth.instance.currentUser!;
   bool isJoinClick = true;
-  final currentUserNickname = FirebaseFirestore.instance
-      .collection("User")
-      .doc(currentUser.email)
-      .get();
-
-  Future<void> getUserName() async {
-    DocumentSnapshot currentUserName = await FirebaseFirestore.instance
-        .collection("User")
-        .doc(currentUser.email)
-        .get();
-    setState(() {
-      currentUserNickname = currentUserName["username"];
-    });
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -58,150 +42,142 @@ class _MyProfilePageState extends State<MyProfilePage> {
           ),
         ],
       ),
-      // body: Row(
-      //   crossAxisAlignment: CrossAxisAlignment.start,
-      //   children: [
-      //     const Padding(
-      //       padding: EdgeInsets.fromLTRB(30, 30, 0, 0),
-      //       child: CircleAvatar(
-      //         radius: 55,
-      //         backgroundColor: Colors.grey,
-      //       ),
-      //     ),
-      //     Center(
-      //       child: Column(
-      //         children: [
-      //           Padding(
-      //             padding: const EdgeInsets.fromLTRB(40, 55, 0, 20),
-      //             child: Text(currentUser.email!.split("@")[0]),
-      //           ),
-      //           Text(),
-      //         ],
-      //       ),
-      //     )
-      //   ],
-      // ),
-      body: Padding(
-        padding: const EdgeInsets.all(30.0),
-        child: Column(
-          children: [
-            Row(
-              crossAxisAlignment: CrossAxisAlignment.start,
+      body: StreamBuilder(
+        stream: FirebaseFirestore.instance
+            .collection("User")
+            .doc(currentUser.email)
+            .snapshots(),
+        builder: (context, snapshot) {
+          if (snapshot.hasData) {
+            final userData = snapshot.data!.data() as Map<String, dynamic>;
+            return ListView(
               children: [
-                // 사용자 사진
-                CircleAvatar(
-                  backgroundColor: Colors.grey[500],
-                  radius: 50.0,
-                ),
-                const SizedBox(
-                  width: 30.0,
-                ),
-                Column(
-                  children: [
-                    const SizedBox(
-                      height: 25.0,
-                    ),
-                    Text(
-                      currentUser.email!,
-                      style: TextStyle(fontSize: 15.0, color: Colors.grey[850]),
-                    ),
-                    SizedBox(
-                      height: 10.0,
-                    ),
-                    Text(
-                      "신사동 / 용현동",
-                      style: TextStyle(
-                        fontSize: 15.0,
+                Padding(
+                  padding: const EdgeInsets.all(30.0),
+                  child: Column(
+                    children: [
+                      Row(
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          // 사용자 사진
+                          CircleAvatar(
+                            backgroundColor: Colors.grey[500],
+                            radius: 50.0,
+                          ),
+                          const SizedBox(
+                            width: 30.0,
+                          ),
+                          Column(
+                            children: [
+                              const SizedBox(
+                                height: 25.0,
+                              ),
+                              Text(
+                                userData['username'],
+                                style: TextStyle(
+                                    fontSize: 15.0, color: Colors.grey[850]),
+                              ),
+                              const SizedBox(
+                                height: 10.0,
+                              ),
+                              Text(
+                                userData['userregion'],
+                                style: TextStyle(
+                                    fontSize: 15.0, color: Colors.grey[850]),
+                              ),
+                            ],
+                          ),
+                          const SizedBox(
+                            width: 30.0,
+                          ),
+                        ],
                       ),
-                    ),
-                  ],
-                ),
-                const SizedBox(
-                  width: 30.0,
+                      const SizedBox(
+                        height: 30.0,
+                      ),
+                      Divider(
+                        color: Colors.grey[900],
+                        indent: 8,
+                        endIndent: 8,
+                      ),
+                      Container(
+                        padding: const EdgeInsets.all(8.0),
+                        child: Row(
+                          mainAxisAlignment: MainAxisAlignment.spaceAround,
+                          children: [
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  isJoinClick = false;
+                                });
+                              },
+                              child: Column(
+                                children: [
+                                  Text(
+                                    "개설 크루",
+                                    style: TextStyle(
+                                      fontSize: 15.0,
+                                      color: !isJoinClick
+                                          ? Colors.blue[300]
+                                          : Colors.grey[700],
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 8),
+                                    height: 2,
+                                    width: 167,
+                                    color: !isJoinClick
+                                        ? Colors.blue[300]
+                                        : Colors.grey[700],
+                                  )
+                                ],
+                              ),
+                            ),
+                            GestureDetector(
+                              onTap: () {
+                                setState(() {
+                                  isJoinClick = true;
+                                });
+                              },
+                              child: Column(
+                                children: [
+                                  Text(
+                                    "가입 크루",
+                                    style: TextStyle(
+                                      fontSize: 15.0,
+                                      color: isJoinClick
+                                          ? Colors.blue[300]
+                                          : Colors.grey[700],
+                                    ),
+                                  ),
+                                  Container(
+                                    margin: const EdgeInsets.only(top: 8),
+                                    height: 2,
+                                    width: 167,
+                                    color: isJoinClick
+                                        ? Colors.blue[300]
+                                        : Colors.grey[700],
+                                  ),
+                                ],
+                              ),
+                            ),
+                          ],
+                        ),
+                      ),
+                    ],
+                  ),
                 ),
               ],
-            ),
-            const SizedBox(
-              height: 30.0,
-            ),
-            Divider(
-              color: Colors.grey[900],
-              indent: 8,
-              endIndent: 8,
-            ),
-            Container(
-              padding: const EdgeInsets.all(8.0),
-              child: Row(
-                mainAxisAlignment: MainAxisAlignment.spaceAround,
-                children: [
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        isJoinClick = false;
-                      });
-                    },
-                    child: Column(
-                      children: [
-                        Text(
-                          "개설 크루",
-                          style: TextStyle(
-                            fontSize: 15.0,
-                            color: !isJoinClick
-                                ? Colors.blue[300]
-                                : Colors.grey[700],
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(top: 8),
-                          height: 2,
-                          width: 167,
-                          color: !isJoinClick
-                              ? Colors.blue[300]
-                              : Colors.grey[700],
-                        )
-                      ],
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      setState(() {
-                        isJoinClick = true;
-                      });
-                    },
-                    child: Column(
-                      children: [
-                        Text(
-                          "가입 크루",
-                          style: TextStyle(
-                            fontSize: 15.0,
-                            color: isJoinClick
-                                ? Colors.blue[300]
-                                : Colors.grey[700],
-                          ),
-                        ),
-                        Container(
-                          margin: const EdgeInsets.only(top: 8),
-                          height: 2,
-                          width: 167,
-                          color:
-                              isJoinClick ? Colors.blue[300] : Colors.grey[700],
-                        ),
-                      ],
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            // if (isJoinClick)
-            //   Container(
-            //     child: const Text("가입 크루 클릭"),
-            //   ),
-            // if (!isJoinClick)
-            //   Container(
-            //     child: const Text("개설 크루 클릭"),
-            //   ),
-          ],
-        ),
+            );
+          } else if (snapshot.hasError) {
+            return Center(
+              child: Text('Error${snapshot.error}'),
+            );
+          }
+          return const Center(
+            child: CircularProgressIndicator(),
+          );
+        },
       ),
     );
   }

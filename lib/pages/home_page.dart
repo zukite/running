@@ -1,3 +1,4 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:running/components/drawer.dart';
@@ -12,6 +13,7 @@ class MyHomePage extends StatefulWidget {
 }
 
 class _MyHomePageState extends State<MyHomePage> {
+  final currentUser = FirebaseAuth.instance.currentUser!;
   bool isClick = true; // 클릭했을 때 색상 변경위한 변수
 
   void signOut() {
@@ -50,11 +52,27 @@ class _MyHomePageState extends State<MyHomePage> {
       appBar: AppBar(
         backgroundColor: Colors.grey[50],
         elevation: 0,
-        title: const Text(
-          "신사동",
-          style: TextStyle(
-            color: Colors.black,
-          ),
+        title: StreamBuilder(
+          stream: FirebaseFirestore.instance
+              .collection("User")
+              .doc(currentUser.email)
+              .snapshots(),
+          builder: (context, snapshot) {
+            if (snapshot.hasData) {
+              final userData = snapshot.data!.data() as Map<String, dynamic>;
+              return Text(
+                userData['userregion'],
+                style: TextStyle(color: Colors.grey[850]),
+              );
+            } else if (snapshot.hasError) {
+              return Center(
+                child: Text('Error${snapshot.error}'),
+              );
+            }
+            return const Center(
+              child: CircularProgressIndicator(),
+            );
+          },
         ),
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.grey[850]),
@@ -144,3 +162,24 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 }
+
+/*
+AppBar(
+        backgroundColor: Colors.grey[50],
+        elevation: 0,
+        title: const Text(
+          "신사동",
+          style: TextStyle(
+            color: Colors.black,
+          ),
+        ),
+        centerTitle: true,
+        iconTheme: IconThemeData(color: Colors.grey[850]),
+        shape: const Border(
+          bottom: BorderSide(
+            color: Colors.grey,
+            width: 0.3,
+          ),
+        ),
+      ),
+*/
