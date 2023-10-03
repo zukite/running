@@ -68,7 +68,7 @@ class _RegisterPageState extends State<RegisterPage> {
           .doc(userCredential.user!.email)
           .set({
         'username': emailTextController.text.split("@")[0],
-        'userregion': '동대문구' // initially empty bio
+        'userregion': ' ' // initially empty bio
         // add any additional fields as needed
       });
 
