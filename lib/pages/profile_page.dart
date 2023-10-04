@@ -62,10 +62,10 @@ class _MyProfilePageState extends State<MyProfilePage> {
                           // 사용자 사진
                           CircleAvatar(
                             backgroundColor: Colors.grey[500],
-                            radius: 50.0,
+                            radius: 60.0,
                           ),
                           const SizedBox(
-                            width: 30.0,
+                            width: 60.0,
                           ),
                           Column(
                             children: [
@@ -75,7 +75,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                               Text(
                                 userData['username'],
                                 style: TextStyle(
-                                    fontSize: 15.0, color: Colors.grey[850]),
+                                    fontSize: 23.0, color: Colors.grey[850]),
                               ),
                               const SizedBox(
                                 height: 10.0,
@@ -83,7 +83,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                               Text(
                                 userData['userregion'],
                                 style: TextStyle(
-                                    fontSize: 15.0, color: Colors.grey[850]),
+                                    fontSize: 23.0, color: Colors.grey[850]),
                               ),
                             ],
                           ),
