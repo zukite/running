@@ -1,19 +1,25 @@
-class Post {
+// import 'dart:html';
+
+// import 'package:cloud_firestore/cloud_firestore.dart';
+
+class Posts {
   String? key;
   String? crewName;
   String? explain;
-  String? num;
+  int? num;
   String? region;
-  String? picUrl;
-  int? like;
+  String? kakaoUrl;
+  // String? picUrl;
+  // int? like;
 
-  Post({
+  Posts({
     required this.key,
-    this.crewName,
-    this.explain,
-    this.num,
-    this.region,
-    this.picUrl,
-    this.like,
+    required this.crewName,
+    required this.explain,
+    required this.num,
+    required this.region,
+    required this.kakaoUrl,
+    // this.picUrl,
+    // this.like,
   });
 }
