@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:running/components/drawer.dart';
 import 'package:running/pages/add_crew_page.dart';
+import 'package:running/pages/post_search_page.dart';
 import 'package:running/pages/profile_page.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -82,6 +83,16 @@ class _MyHomePageState extends State<MyHomePage> {
             width: 0.3,
           ),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.search),
+            onPressed: () {
+              Navigator.of(context).push(
+                MaterialPageRoute(builder: (context) => const PostSearch()),
+              );
+            },
+          ),
+        ],
       ),
       drawer: MyDrawer(
         onProfileTap: goToProfilePage,
@@ -113,7 +124,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       const SizedBox(height: 8),
                       Container(
                         height: 2.0,
-                        width: 197.7,
+                        width: MediaQuery.of(context).size.width / 2 - 8,
                         color: isClick ? Colors.blue : Colors.grey,
                       ),
                     ],
@@ -138,7 +149,7 @@ class _MyHomePageState extends State<MyHomePage> {
                       const SizedBox(height: 8),
                       Container(
                         height: 2.0,
-                        width: 197.7,
+                        width: MediaQuery.of(context).size.width / 2 - 8,
                         color: !isClick ? Colors.blue : Colors.grey,
                       ),
                     ],
