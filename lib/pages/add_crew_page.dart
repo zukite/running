@@ -1,11 +1,14 @@
-// import 'dart:io';
+import 'dart:io';
 import 'dart:math';
+import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_storage/firebase_storage.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
-// import 'package:image_picker/image_picker.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:running/pages/home_page.dart';
+
+// import '../utils/image.dart';
 
 class MyAddCrew extends StatefulWidget {
   const MyAddCrew({super.key});
@@ -29,6 +32,7 @@ class _MyAddCrewState extends State<MyAddCrew> {
   String crewDesc = "";
   String crewPeopleNum = "";
   String crewUrl = "";
+  String crewimageUrl = "";
 
   final String _chars =
       'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
@@ -37,8 +41,11 @@ class _MyAddCrewState extends State<MyAddCrew> {
   String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
       length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
-  // final ImagePicker _picker = ImagePicker();
+  final FirebaseStorage _storage =
+      FirebaseStorage.instance; // Firebase Storage 인스턴스 생성
 
+  // Uint8List? _image;
+  // bool selectedImage = false; // 이미지가 선택되었는지 여부를 나타내는 변수
   void postCrew() async {
     showDialog(
       context: context,
@@ -47,103 +54,83 @@ class _MyAddCrewState extends State<MyAddCrew> {
       ),
     );
 
-    // Future<void> pickAndUploadImage() async {
-    //   final pickedFile = await _picker.getImage(source: ImageSource.gallery);
-
-    //   if (pickedFile != null) {
-    //     final File imageFile = File(pickedFile.path);
-    //     final String postKey = getRandomString(16);
-    //     final Reference storageReference =
-    //         FirebaseStorage.instance.ref().child('crew_images/$postKey.jpg');
-
-    //     showDialog(
-    //       context: context,
-    //       builder: (context) => const Center(
-    //         child: CircularProgressIndicator(),
-    //       ),
-    //     );
-    //     try {
-    //       final UploadTask uploadTask = storageReference.putFile(
-    //         imageFile,
-    //         SettableMetadata(contentType: 'image/jpeg'),
-    //       );
-
-    //       await uploadTask.whenComplete(() async {
-    //         final imageUrl = await storageReference.getDownloadURL();
-
-    //         await FirebaseFirestore.instance
-    //             .collection('Posts')
-    //             .doc(postKey)
-    //             .set({
-    //           'key': postKey,
-    //           'authorName': currentUser?.displayName,
-    //           'crewName': crewName,
-    //           'explain': crewDesc,
-    //           'num': crewPeopleNum,
-    //           'region': crewRegion,
-    //           'kakaoUrl': crewUrl,
-    //           'imageUrl': imageUrl,
-    //         });
-
-    //         Navigator.of(context).pop();
-    //         Navigator.pushReplacement(
-    //           context,
-    //           MaterialPageRoute(
-    //             builder: (context) => MyHomePage(),
-    //           ),
-    //         );
-    //       });
-    //     } on FirebaseAuthException catch (e) {
-    //       Navigator.of(context).pop();
-    //       ScaffoldMessenger.of(context).showSnackBar(
-    //         SnackBar(
-    //           content: Text("오류 : ${e.code}"),
-    //         ),
-    //       );
-    //     }
-    //   }
     try {
-      if (crewName.isNotEmpty &&
-          crewDesc.isNotEmpty &&
-          crewPeopleNum.isNotEmpty &&
-          crewRegion.isNotEmpty &&
-          crewUrl.isNotEmpty) {
+      if (/*crewimageUrl.isNotEmpty &&*/
+          crewName.isNotEmpty &&
+              crewDesc.isNotEmpty &&
+              crewPeopleNum.isNotEmpty &&
+              crewRegion.isNotEmpty &&
+              crewUrl.isNotEmpty) {
         String postKey = getRandomString(16);
+
+        if (_image != null) {
+          String imagePath = "post_images/${currentUser?.uid}.jpg";
+          Reference ref = _storage.ref().child(imagePath);
+          UploadTask uploadTask = ref.putData(_image!);
+
+          TaskSnapshot snapshot = await uploadTask;
+          if (snapshot.state == TaskState.success) {
+            String downloadUrl = await ref.getDownloadURL();
+            crewimageUrl = downloadUrl;
+          }
+        }
 
         await FirebaseFirestore.instance.collection('Posts').doc(postKey).set({
           'key': postKey,
           'authorName': currentUser?.email?.split('@')[0],
+          'imageUrl': crewimageUrl,
           'crewName': crewName,
           'explain': crewDesc,
           'num': crewPeopleNum,
           'region': crewRegion,
           'kakaoUrl': crewUrl,
-          // 'imageUrl':imageUrl,
-          // 'like':0,
+          'timestamp': FieldValue.serverTimestamp(),
         });
-        Navigator.of(context).pop(); // 다이얼로그 닫기
+
+        // 성공적으로 크루를 만들었을 때 다이얼로그 닫기
+        Navigator.of(context).pop();
+
         Navigator.pushReplacement(
           context,
           MaterialPageRoute(
-              builder: (context) =>
-                  MyHomePage()), // MyHomePage는 실제 홈 화면 위젯에 대한 클래스명으로 수정해야 합니다.
+            builder: (context) => const MyHomePage(),
+          ),
         );
       } else {
         // 필수 필드가 비어 있음을 사용자에게 알릴 수 있도록 메시지 표시
+        // 다이얼로그 닫기
+        Navigator.of(context).pop();
+
         ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
+          const SnackBar(
             content: Text("필수 필드를 모두 입력하세요."),
           ),
         );
       }
     } on FirebaseAuthException catch (e) {
-      // pop loding circle
+      // pop loading circle
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
           content: Text("오류 : ${e.code}"),
         ),
       );
+    }
+  }
+
+  Uint8List? _image;
+  bool selectedImage = false; // 이미지가 선택되었는지 여부를 나타내는 변수
+  final ImagePicker _imagePicker = ImagePicker();
+
+  Future<void> selectImage() async {
+    var image = await _imagePicker.pickImage(source: ImageSource.gallery);
+
+    if (image != null) {
+      setState(() {
+        // 이미지 파일을 Uint8List로 변환하여 _image에 저장
+        _image = File(image.path).readAsBytesSync();
+        selectedImage = true; // 이미지가 선택되었음을 표시
+      });
     }
   }
 
@@ -171,22 +158,40 @@ class _MyAddCrewState extends State<MyAddCrew> {
           child: Column(
             children: [
               const SizedBox(height: 10),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                height: 150,
-                width: MediaQuery.of(context).size.width,
-                decoration: BoxDecoration(
-                  color: Colors.grey[300],
-                  borderRadius: BorderRadius.circular(10),
-                ),
-                child: IconButton(
-                  icon: Icon(
-                    Icons.add_a_photo,
-                    color: Colors.grey[500],
-                  ),
-                  onPressed: () {},
-                ),
-              ),
+              selectedImage
+                  ? Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      height: 150,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.blue),
+                      ),
+                      child: Image.memory(
+                        _image!,
+                        fit: BoxFit.fill,
+                      ),
+                    )
+                  : Container(
+                      margin: const EdgeInsets.symmetric(horizontal: 16),
+                      height: 150,
+                      width: MediaQuery.of(context).size.width,
+                      decoration: BoxDecoration(
+                        color: Colors.grey[300],
+                        borderRadius: BorderRadius.circular(10),
+                        border: Border.all(color: Colors.blue),
+                      ),
+                      child: IconButton(
+                        icon: Icon(
+                          Icons.add_a_photo,
+                          color: Colors.grey[500],
+                        ),
+                        onPressed: () {
+                          selectImage();
+                        },
+                      ),
+                    ),
               const SizedBox(height: 8),
               Container(
                 margin: const EdgeInsets.symmetric(horizontal: 16),
@@ -346,10 +351,3 @@ class _MyAddCrewState extends State<MyAddCrew> {
     );
   }
 }
-
-  // @override
-  // Widget build(BuildContext context) {
-  //   // TODO: implement build
-  //   throw UnimplementedError();
-  // }
-

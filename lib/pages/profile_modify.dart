@@ -1,11 +1,11 @@
 import 'dart:typed_data';
-
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:running/components/text_box.dart';
+import 'package:running/pages/profile_page.dart';
 import 'package:running/utils/image.dart';
 
 class MyProfileModify extends StatefulWidget {
@@ -113,7 +113,13 @@ class _MyProfileModifyState extends State<MyProfileModify> {
         ),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () {
+              Navigator.of(context).pushReplacement(
+                MaterialPageRoute(
+                  builder: (context) => const MyProfilePage(),
+                ),
+              );
+            },
             icon: const Icon(Icons.save_alt),
           ),
         ],
@@ -133,7 +139,7 @@ class _MyProfileModifyState extends State<MyProfileModify> {
                 Center(
                   child: Stack(
                     children: [
-                      selectedImage && _image != null
+                      (selectedImage && (_image != null))
                           ? CircleAvatar(
                               radius: 55,
                               backgroundImage: MemoryImage(_image!),

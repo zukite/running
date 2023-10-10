@@ -168,8 +168,8 @@ class _MyHomePageState extends State<MyHomePage> {
             MaterialPageRoute(builder: (context) => const MyAddCrew()),
           );
         },
-        child: const Icon(Icons.add),
         elevation: 0.0,
+        child: const Icon(Icons.add),
       ),
     );
   }
