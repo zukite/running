@@ -1,16 +1,12 @@
-// import 'dart:js_interop';
-
 import 'package:firebase_auth/firebase_auth.dart';
-// import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:running/components/button.dart';
 import 'package:running/components/text_field.dart';
-// import 'package:running/pages/login_page.dart';
 
 class LoginPage extends StatefulWidget {
   final Function()? onTap;
   const LoginPage({
-    super.key,
+    Key? key,
     required this.onTap,
   });
 
@@ -32,18 +28,27 @@ class _LoginPageState extends State<LoginPage> {
       ),
     );
 
-    // 로그인 시도
     try {
-      await FirebaseAuth.instance.signInWithEmailAndPassword(
+      final userCredential =
+          await FirebaseAuth.instance.signInWithEmailAndPassword(
         email: emailTextController.text,
         password: passwordTextController.text,
       );
 
       // 로딩 원 종료
-      if (context.mounted) Navigator.pop(context);
+      if (context != null) {
+        Navigator.pop(context);
+      }
+
+      if (userCredential != null) {
+        // 로그인 성공한 경우
+        // ...
+      }
     } on FirebaseAuthException catch (e) {
       // pop 로딩 원
-      Navigator.pop(context);
+      if (context != null) {
+        Navigator.pop(context);
+      }
       // 화면에 에러메시지 나타냄
       displayMEssage(e.code);
     }

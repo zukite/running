@@ -1,3 +1,5 @@
+// ignore_for_file: use_build_context_synchronously
+
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
@@ -159,19 +161,22 @@ class _MyAddCrewState extends State<MyAddCrew> {
             children: [
               const SizedBox(height: 10),
               selectedImage
-                  ? Container(
-                      margin: const EdgeInsets.symmetric(horizontal: 16),
-                      height: 150,
-                      width: MediaQuery.of(context).size.width,
-                      decoration: BoxDecoration(
-                        color: Colors.grey[300],
-                        borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Colors.blue),
+                  ? GestureDetector(
+                      child: Container(
+                        margin: const EdgeInsets.symmetric(horizontal: 16),
+                        height: 150,
+                        width: MediaQuery.of(context).size.width,
+                        decoration: BoxDecoration(
+                          color: Colors.grey[300],
+                          borderRadius: BorderRadius.circular(10),
+                          border: Border.all(color: Colors.blue),
+                        ),
+                        child: Image.memory(
+                          _image!,
+                          fit: BoxFit.fill,
+                        ),
                       ),
-                      child: Image.memory(
-                        _image!,
-                        fit: BoxFit.fill,
-                      ),
+                      onTap: selectImage,
                     )
                   : Container(
                       margin: const EdgeInsets.symmetric(horizontal: 16),
