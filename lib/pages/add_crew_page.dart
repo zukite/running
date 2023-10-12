@@ -66,7 +66,8 @@ class _MyAddCrewState extends State<MyAddCrew> {
         String postKey = getRandomString(16);
 
         if (_image != null) {
-          String imagePath = "post_images/${currentUser?.uid}.jpg";
+          // 이미지 업로드
+          String imagePath = "post_images/${currentUser?.uid}_$postKey.jpg";
           Reference ref = _storage.ref().child(imagePath);
           UploadTask uploadTask = ref.putData(_image!);
 
@@ -117,6 +118,12 @@ class _MyAddCrewState extends State<MyAddCrew> {
           content: Text("오류 : ${e.code}"),
         ),
       );
+    } finally {
+      // 게시물 작성이 완료되면 이미지 초기화
+      setState(() {
+        _image = null;
+        selectedImage = false;
+      });
     }
   }
 
@@ -171,9 +178,12 @@ class _MyAddCrewState extends State<MyAddCrew> {
                           borderRadius: BorderRadius.circular(10),
                           border: Border.all(color: Colors.blue),
                         ),
-                        child: Image.memory(
-                          _image!,
-                          fit: BoxFit.fill,
+                        child: ClipRRect(
+                          borderRadius: BorderRadius.circular(10.0),
+                          child: Image.memory(
+                            _image!,
+                            fit: BoxFit.fill,
+                          ),
                         ),
                       ),
                       onTap: selectImage,

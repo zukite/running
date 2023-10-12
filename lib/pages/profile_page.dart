@@ -154,7 +154,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                               child: Column(
                                 children: [
                                   Text(
-                                    "가입 크루",
+                                    "관심 크루",
                                     style: TextStyle(
                                       fontSize: 15.0,
                                       color: isJoinClick
