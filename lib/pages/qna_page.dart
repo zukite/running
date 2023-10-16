@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+import 'package:running/components/qna_post_list.dart';
 import 'package:running/pages/add_qna_page.dart';
 import 'package:running/pages/qna_search_page.dart';
 
@@ -21,6 +22,7 @@ class _QnAPageState extends State<QnAPage> {
           style: TextStyle(color: Colors.grey[850]),
         ),
         elevation: 0.0,
+        centerTitle: true,
         actions: [
           IconButton(
             icon: const Icon(Icons.search),
@@ -40,6 +42,7 @@ class _QnAPageState extends State<QnAPage> {
           ),
         ],
       ),
+      body: QnaPostList(), // QnaPostList 위젯을 추가
     );
   }
 }

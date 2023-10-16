@@ -21,7 +21,7 @@ class MyPostTile extends StatelessWidget {
     final dateTime = timestamp.toDate();
 
     // DateTime을 특정 형식으로 포맷
-    final formattedTimestamp = DateFormat('yyyy-MM-dd HH:mm').format(dateTime);
+    final formattedTimestamp = DateFormat('MM/dd HH:mm').format(dateTime);
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 4),
       child: Card(
