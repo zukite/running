@@ -1,4 +1,5 @@
 import 'package:flutter/material.dart';
+// import 'package:url_launcher/url_launcher.dart';
 
 class PostDetail extends StatefulWidget {
   final Map<String, dynamic> postData;
@@ -13,6 +14,16 @@ class PostDetail extends StatefulWidget {
 }
 
 class _PostDetailState extends State<PostDetail> {
+  // // 함수를 만들어 URL을 여는 데 사용할 것입니다.
+  // _launchURL() async {
+  //   final String url = widget.postData['kakaoUrl'];
+  //   if (await canLaunch(url)) {
+  //     await launch(url);
+  //   } else {
+  //     throw 'Could not launch $url';
+  //   }
+  // }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -90,6 +101,7 @@ class _PostDetailState extends State<PostDetail> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(10),
         child: ElevatedButton(
+          // onPressed: _launchURL,
           onPressed: () {},
           child: Text("가입하기"),
           style: ElevatedButton.styleFrom(

@@ -6,6 +6,7 @@ import 'package:running/components/post_list.dart';
 import 'package:running/pages/add_crew_page.dart';
 import 'package:running/pages/post_search_page.dart';
 import 'package:running/pages/profile_page.dart';
+import 'package:running/pages/qna_page.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -31,6 +32,19 @@ class _MyHomePageState extends State<MyHomePage> {
       context,
       MaterialPageRoute(
         builder: (context) => const MyProfilePage(),
+      ),
+    );
+  }
+
+  void qnaPage() {
+    // pop menu drawer
+    Navigator.pop(context);
+
+    // go to profile page
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const QnAPage(),
       ),
     );
   }
@@ -98,6 +112,7 @@ class _MyHomePageState extends State<MyHomePage> {
       drawer: MyDrawer(
         onProfileTap: goToProfilePage,
         onSignOut: signOut,
+        onQnA: qnaPage,
       ),
       body: Column(
         children: [

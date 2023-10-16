@@ -30,20 +30,27 @@ class MyPostList extends StatelessWidget {
             itemBuilder: (context, index) {
               final post = posts[index].data() as Map<String, dynamic>;
               final imageUrl = post['imageUrl']; // 이미지 URL 가져오기
-              return GestureDetector(
-                child: MyPostTile(
-                  title: post['crewName'],
-                  // subtitle: post['explain'],
-                  image: imageUrl, // 이미지 URL 전달
-                ),
-                onTap: () {
-                  Navigator.of(context).push(MaterialPageRoute(
-                    builder: (context) => PostDetail(
-                      postData: post,
-                    ),
-                  ));
-                },
-              );
+              final timestamp = post['timestamp'];
+              if (timestamp != null && timestamp is Timestamp) {
+                return GestureDetector(
+                  child: MyPostTile(
+                    title: post['crewName'],
+                    timestamp: post['timestamp'],
+                    // subtitle: post['explain'],
+                    image: imageUrl, // 이미지 URL 전달
+                  ),
+                  onTap: () {
+                    Navigator.of(context).push(MaterialPageRoute(
+                      builder: (context) => PostDetail(
+                        postData: post,
+                      ),
+                    ));
+                  },
+                );
+              } else {
+                // 'timestamp' 필드가 null이거나 예상치 못한 형식인 경우 처리
+                return Container(); // 빈 컨테이너 또는 다른 대체 UI를 사용할 수 있음
+              }
             },
           );
         }
