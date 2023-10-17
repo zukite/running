@@ -26,12 +26,38 @@ class _QnaDetailState extends State<QnaDetail> {
       ),
       body: SingleChildScrollView(
         child: Padding(
-          padding: const EdgeInsets.symmetric(horizontal: 15),
+          padding: const EdgeInsets.symmetric(
+            horizontal: 20,
+            vertical: 10,
+          ),
           child: Column(
             children: [
               Container(
-                child: Row(children: []),
-              )
+                width: MediaQuery.of(context).size.width,
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      widget.postData['title'],
+                      style: const TextStyle(
+                        fontWeight: FontWeight.bold,
+                        fontSize: 25,
+                      ),
+                    ),
+                    const SizedBox(height: 13),
+                    Text(
+                      widget.postData['desc'],
+                      style: const TextStyle(fontSize: 15),
+                    ),
+                    const SizedBox(height: 10),
+                    Container(
+                      width: double.infinity,
+                      height: 0.8, // 테두리의 높이
+                      color: Colors.grey[350], // 테두리의 색상
+                    ),
+                  ],
+                ),
+              ),
             ],
           ),
         ),

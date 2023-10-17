@@ -42,7 +42,7 @@ class _QnAPageState extends State<QnAPage> {
           ),
         ],
       ),
-      body: QnaPostList(), // QnaPostList 위젯을 추가
+      body: const QnaPostList(), // QnaPostList 위젯을 추가
     );
   }
 }

@@ -1,4 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:flutter/material.dart';
+
+import '../components/search_post_list.dart';
 
 class PostSearch extends StatefulWidget {
   const PostSearch({super.key});
@@ -8,6 +11,31 @@ class PostSearch extends StatefulWidget {
 }
 
 class _PostSearchState extends State<PostSearch> {
+  final TextEditingController _searchController =
+      TextEditingController(); // 검색어를 입력하고 검색버튼을 누를 때 검색어를 가져오기 위한 컨트롤러
+  List<Map<String, dynamic>> searchResults =
+      []; // Firestore에서 검색 쿼리를 실행하고 결과를 가져오는 함수
+
+// Firestore에서 검색 쿼리를 실행하고 결과를 가져오는 함수
+  void _searchPosts(String query) async {
+    setState(() {
+      searchResults = []; // 검색 결과 초기화
+    });
+
+    if (query.length >= 2) {
+      FirebaseFirestore.instance
+          .collection("Posts")
+          .where("crewName", arrayContains: query)
+          .get()
+          .then((querySnapshot) {
+        setState(() {
+          searchResults
+              .addAll(querySnapshot.docs.map((doc) => doc.data()).toList());
+        });
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -17,14 +45,48 @@ class _PostSearchState extends State<PostSearch> {
           color: Colors.grey[850],
         ),
         title: Text(
-          "게시글 검색",
+          "크루 검색",
           style: TextStyle(
             color: Colors.grey[850],
           ),
         ),
         elevation: 0,
       ),
-      body: SingleChildScrollView(),
+      body: Column(
+        children: [
+          Padding(
+            padding: const EdgeInsets.symmetric(horizontal: 20),
+            child: TextField(
+              controller: _searchController,
+              decoration: InputDecoration(
+                hintText: '글 제목, 내용',
+                hintStyle: TextStyle(
+                  color: Colors.grey[500],
+                ),
+                enabledBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+                focusedBorder: const OutlineInputBorder(
+                  borderSide: BorderSide(color: Colors.white),
+                  borderRadius: BorderRadius.all(Radius.circular(10)),
+                ),
+                fillColor: Colors.grey.shade200,
+                filled: true,
+                suffixIcon: IconButton(
+                  icon: const Icon(Icons.search),
+                  onPressed: () {
+                    _searchPosts(_searchController.text);
+                  },
+                ),
+              ),
+            ),
+          ),
+          Expanded(
+            child: SearchPostList(searchResults: searchResults),
+          ),
+        ],
+      ),
     );
   }
 }
