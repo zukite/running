@@ -8,7 +8,7 @@ class PostDetail extends StatefulWidget {
   final User? currentUser; // 현재 사용자 정보
 
   const PostDetail({
-    super.key,
+    Key? key, // key를 직접 정의해야 합니다.
     required this.postData,
     required this.currentUser,
   });
@@ -30,8 +30,8 @@ class _PostDetailState extends State<PostDetail> {
 
   @override
   Widget build(BuildContext context) {
-    final bool isAuthor =
-        widget.currentUser?.uid == widget.postData['authorUid'];
+    final isAuthor = widget.currentUser?.uid == widget.postData['authorUid'];
+
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -57,7 +57,7 @@ class _PostDetailState extends State<PostDetail> {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => EditPost(widget.postData),
+                    builder: (context) => EditPost(postData: widget.postData),
                   ),
                 );
               },

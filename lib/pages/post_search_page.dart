@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
 import '../components/search_post_list.dart';
@@ -91,7 +92,10 @@ class _PostSearchState extends State<PostSearch> {
             ),
           ),
           Expanded(
-            child: SearchPostList(searchResults: searchResults),
+            child: SearchPostList(
+              searchResults: searchResults,
+              currentUser: FirebaseAuth.instance.currentUser, // 현재 사용자 정보를 전달
+            ),
           ),
         ],
       ),

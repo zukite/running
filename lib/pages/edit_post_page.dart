@@ -1,15 +1,23 @@
 import 'package:flutter/material.dart';
 
-class EditPost extends StatefulWidget {
-  const EditPost({super.key});
+class EditPost extends StatelessWidget {
+  final Map<String, dynamic> postData;
 
-  @override
-  State<EditPost> createState() => _EditPostState();
-}
+  EditPost({
+    Key? key,
+    required this.postData,
+  }) : super(key: key);
 
-class _EditPostState extends State<EditPost> {
   @override
   Widget build(BuildContext context) {
-    return const Placeholder();
+    // EditPost 페이지의 내용을 구현하세요.
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Edit Post'),
+      ),
+      body: Center(
+        child: Text('This is the Edit Post page for ${postData['crewName']}'),
+      ),
+    );
   }
 }

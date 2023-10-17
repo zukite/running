@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:running/components/post_tile.dart';
 import 'package:running/pages/post_detail_page.dart';
@@ -8,6 +9,7 @@ class MyPostList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final User? currentUser = FirebaseAuth.instance.currentUser;
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection("Posts")
@@ -43,6 +45,7 @@ class MyPostList extends StatelessWidget {
                     Navigator.of(context).push(MaterialPageRoute(
                       builder: (context) => PostDetail(
                         postData: post,
+                        currentUser: currentUser, // currentUser도 전달
                       ),
                     ));
                   },
