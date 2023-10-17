@@ -1,12 +1,16 @@
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:running/pages/edit_post_page.dart';
 // import 'package:url_launcher/url_launcher.dart';
 
 class PostDetail extends StatefulWidget {
   final Map<String, dynamic> postData;
+  final User? currentUser; // 현재 사용자 정보
 
   const PostDetail({
     super.key,
     required this.postData,
+    required this.currentUser,
   });
 
   @override
@@ -26,6 +30,8 @@ class _PostDetailState extends State<PostDetail> {
 
   @override
   Widget build(BuildContext context) {
+    final bool isAuthor =
+        widget.currentUser?.uid == widget.postData['authorUid'];
     return Scaffold(
       appBar: AppBar(
         title: Text(
@@ -43,7 +49,21 @@ class _PostDetailState extends State<PostDetail> {
             onPressed: () {},
             icon: Icon(Icons.star_border_rounded),
             color: Colors.grey[850],
-          )
+          ),
+          if (isAuthor) // 작성자인 경우에만 수정 버튼을 표시
+            IconButton(
+              onPressed: () {
+                // 게시글 수정 페이지로 이동
+                Navigator.push(
+                  context,
+                  MaterialPageRoute(
+                    builder: (context) => EditPost(widget.postData),
+                  ),
+                );
+              },
+              icon: Icon(Icons.edit),
+              color: Colors.grey[850],
+            ),
         ],
       ),
       body: SingleChildScrollView(

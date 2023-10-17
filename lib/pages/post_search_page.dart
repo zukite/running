@@ -23,14 +23,22 @@ class _PostSearchState extends State<PostSearch> {
     });
 
     if (query.length >= 2) {
-      FirebaseFirestore.instance
-          .collection("Posts")
-          .where("crewName", arrayContains: query)
-          .get()
-          .then((querySnapshot) {
+      List<String> keywords = query.split(" ");
+
+      Query queryRef = FirebaseFirestore.instance.collection("Posts");
+
+      for (String keyword in keywords) {
+        queryRef = queryRef
+            .where("crewName", isGreaterThanOrEqualTo: keyword)
+            .where("crewName", isLessThanOrEqualTo: keyword + '\uf8ff');
+      }
+
+      queryRef.get().then((querySnapshot) {
         setState(() {
-          searchResults
-              .addAll(querySnapshot.docs.map((doc) => doc.data()).toList());
+          searchResults.addAll(querySnapshot.docs
+              .map((doc) => doc.data())
+              .cast<Map<String, dynamic>>()
+              .toList());
         });
       });
     }

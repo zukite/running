@@ -81,6 +81,7 @@ class _MyAddCrewState extends State<MyAddCrew> {
         await FirebaseFirestore.instance.collection('Posts').doc(postKey).set({
           'key': postKey,
           'authorName': currentUser?.email?.split('@')[0],
+          'authorUid': currentUser?.uid, // 작성자의 UID를 저장
           'imageUrl': crewimageUrl,
           'crewName': crewName,
           'explain': crewDesc,
