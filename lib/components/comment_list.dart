@@ -21,7 +21,7 @@ class CommentList extends StatelessWidget {
           return CircularProgressIndicator();
         } else if (!snapshot.hasData || snapshot.data!.docs.isEmpty) {
           return Center(
-            child: Text('댓글이 없습니다.'),
+            child: Text(''),
           );
         } else {
           final comments = snapshot.data!.docs;
