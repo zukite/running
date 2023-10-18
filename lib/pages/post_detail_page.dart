@@ -1,6 +1,7 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:running/pages/edit_post_page.dart';
+import 'package:running/pages/post_edit_page.dart';
 // import 'package:url_launcher/url_launcher.dart';
 
 class PostDetail extends StatefulWidget {
@@ -18,19 +19,32 @@ class PostDetail extends StatefulWidget {
 }
 
 class _PostDetailState extends State<PostDetail> {
-  // // 함수를 만들어 URL을 여는 데 사용할 것입니다.
-  // _launchURL() async {
-  //   final String url = widget.postData['kakaoUrl'];
-  //   if (await canLaunch(url)) {
-  //     await launch(url);
-  //   } else {
-  //     throw 'Could not launch $url';
-  //   }
-  // }
+  // final FirebaseAuth _auth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+
+  void deletePost() async {
+    if (widget.currentUser != null &&
+        widget.currentUser!.uid == widget.postData['authorUid']) {
+      try {
+        // 게시물을 Firestore에서 삭제
+        await _firestore
+            .collection('Posts')
+            .doc(widget.postData['key'])
+            .delete();
+
+        // 게시물을 삭제한 후 현재 페이지를 닫음
+        Navigator.pop(context);
+      } catch (e) {
+        // 삭제 중에 오류가 발생한 경우 오류 처리
+        print('게시물 삭제 오류: $e');
+      }
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     final isAuthor = widget.currentUser?.uid == widget.postData['authorUid'];
+    final isCurrentUserAuthor = isAuthor;
 
     return Scaffold(
       appBar: AppBar(
@@ -47,23 +61,54 @@ class _PostDetailState extends State<PostDetail> {
         actions: [
           IconButton(
             onPressed: () {},
-            icon: Icon(Icons.star_border_rounded),
+            icon: const Icon(Icons.star_border_rounded),
             color: Colors.grey[850],
           ),
-          if (isAuthor) // 작성자인 경우에만 수정 버튼을 표시
-            IconButton(
-              onPressed: () {
-                // 게시글 수정 페이지로 이동
-                Navigator.push(
-                  context,
-                  MaterialPageRoute(
-                    builder: (context) => EditPost(postData: widget.postData),
+          PopupMenuButton<String>(
+            onSelected: (value) {
+              if (isCurrentUserAuthor) {
+                if (value == '수정하기') {
+                  // Navigate to the edit post page
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) => EditPost(postData: widget.postData),
+                    ),
+                  );
+                } else if (value == '삭제하기') {
+                  // 게시물 삭제 함수 호출
+                  deletePost();
+                }
+              } else {
+                // Display a message if the current user is not the author
+                ScaffoldMessenger.of(context).showSnackBar(
+                  SnackBar(
+                    content: Text("게시글의 작성자가 아닙니다"),
                   ),
                 );
-              },
-              icon: Icon(Icons.edit),
-              color: Colors.grey[850],
-            ),
+              }
+            },
+            itemBuilder: (BuildContext context) {
+              final items = <PopupMenuEntry<String>>[
+                const PopupMenuItem<String>(
+                  value: '수정하기',
+                  child: Text('수정하기'),
+                ),
+              ];
+
+              if (isCurrentUserAuthor) {
+                // Only show the "삭제하기" option if the current user is the author
+                items.add(
+                  const PopupMenuItem<String>(
+                    value: '삭제하기',
+                    child: Text('삭제하기'),
+                  ),
+                );
+              }
+
+              return items;
+            },
+          ),
         ],
       ),
       body: SingleChildScrollView(

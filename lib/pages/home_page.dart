@@ -3,7 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:running/components/drawer.dart';
 import 'package:running/components/post_list.dart';
-import 'package:running/pages/add_crew_page.dart';
+import 'package:running/pages/post_add_page.dart';
 import 'package:running/pages/post_search_page.dart';
 import 'package:running/pages/profile_page.dart';
 import 'package:running/pages/qna_page.dart';

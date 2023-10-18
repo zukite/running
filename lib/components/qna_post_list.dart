@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:running/components/qna_post_tile.dart';
 import 'package:running/pages/qna_detail_page.dart';
@@ -8,6 +9,7 @@ class QnaPostList extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final User? currentUser = FirebaseAuth.instance.currentUser;
     return StreamBuilder<QuerySnapshot>(
       stream: FirebaseFirestore.instance
           .collection("QnAPosts")
@@ -41,6 +43,7 @@ class QnaPostList extends StatelessWidget {
                       Navigator.of(context).push(MaterialPageRoute(
                         builder: (context) => QnaDetail(
                           postData: qnaPost,
+                          currentUser: currentUser,
                         ),
                       ));
                     },

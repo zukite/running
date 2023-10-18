@@ -45,6 +45,7 @@ class _AddQnaState extends State<AddQna> {
             .doc(postKey)
             .set({
           'key': postKey,
+          'authorUid': currentUser?.uid,
           'title': qtitle,
           'desc': qdesc,
           'authorName': currentUser?.email?.split('@')[0],

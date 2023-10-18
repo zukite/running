@@ -26,16 +26,8 @@ class QnaPostTile extends StatelessWidget {
       padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 4),
       child: Card(
         color: Colors.grey[50],
-        elevation: 0, // 그림자 제거
-        shape: const RoundedRectangleBorder(
-          borderRadius: BorderRadius.vertical(
-            bottom: Radius.circular(0), // 아래 테두리만 설정
-          ),
-          side: BorderSide(
-            color: Colors.grey, // 테두리 색상 설정
-            width: 1, // 테두리 두께 설정
-          ),
-        ),
+        elevation: 0.7, // 그림자 제거
+
         child: ListTile(
           contentPadding: const EdgeInsets.symmetric(
               horizontal: 16, vertical: 8), // 내용 패딩 조정

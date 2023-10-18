@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:running/components/qna_post_list.dart';
-import 'package:running/pages/add_qna_page.dart';
+import 'package:running/pages/qna_add_page.dart';
 import 'package:running/pages/qna_search_page.dart';
 
 class QnAPage extends StatefulWidget {
