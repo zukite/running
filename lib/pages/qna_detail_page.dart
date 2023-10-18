@@ -1,7 +1,11 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:running/components/comment_list.dart';
+import 'package:running/components/text_field.dart';
 import 'package:running/pages/qna_edit_page.dart';
+
+import '../utils/comment.dart';
 
 class QnaDetail extends StatefulWidget {
   final Map<String, dynamic> postData;
@@ -19,6 +23,7 @@ class QnaDetail extends StatefulWidget {
 
 class _QnaDetailState extends State<QnaDetail> {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  final textController = TextEditingController();
 
   void deletePost() async {
     if (widget.currentUser != null &&
@@ -36,6 +41,32 @@ class _QnaDetailState extends State<QnaDetail> {
         // 삭제 중에 오류가 발생한 경우 오류 처리
         print('게시물 삭제 오류: $e');
       }
+    }
+  }
+
+  void postComment() async {
+    String commentText = textController.text;
+
+    if (commentText.isNotEmpty) {
+      Comment comment = Comment(
+        authorId: widget.currentUser!.uid, // 현재 사용자의 UID
+        text: commentText,
+        timestamp: Timestamp.now(),
+      );
+
+      // Firestore에 댓글 저장
+      await _firestore
+          .collection('QnAPosts')
+          .doc(widget.postData['key'])
+          .collection('comments')
+          .add({
+        'authorId': comment.authorId,
+        'text': comment.text,
+        'timestamp': comment.timestamp,
+      });
+
+      // 댓글 작성 후 텍스트 필드를 지웁니다.
+      textController.clear();
     }
   }
 
@@ -127,6 +158,25 @@ class _QnaDetailState extends State<QnaDetail> {
                   ],
                 ),
               ),
+              CommentList(postKey: widget.postData['key']),
+              Padding(
+                padding: const EdgeInsets.all(8),
+                child: Row(
+                  children: [
+                    Expanded(
+                      child: MyTextField(
+                        controller: textController,
+                        hintText: "댓글을 입력하세요",
+                        obscureText: false,
+                      ),
+                    ),
+                    IconButton(
+                      onPressed: postComment,
+                      icon: const Icon(Icons.arrow_circle_up),
+                    )
+                  ],
+                ),
+              )
             ],
           ),
         ),
