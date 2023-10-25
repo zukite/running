@@ -45,8 +45,9 @@ dependencies:
   geolocator: ^10.1.0
   random_string: ^2.3.1
   intl: ^0.18.1
-  url_launcher: ^6.1.14
+  url_launcher: ^6.2.0
   firebase_database: ^10.2.7
+  flutter_naver_map: ^1.0.2
 
 dev_dependencies:
   flutter_test:

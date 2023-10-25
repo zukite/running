@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:running/pages/post_edit_page.dart';
+import 'package:url_launcher/url_launcher.dart';
 // import 'package:url_launcher/url_launcher.dart';
 
 class PostDetail extends StatefulWidget {
@@ -38,6 +39,19 @@ class _PostDetailState extends State<PostDetail> {
         // 삭제 중에 오류가 발생한 경우 오류 처리
         print('게시물 삭제 오류: $e');
       }
+    }
+  }
+
+  Future<void> _launchURL() async {
+    Uri url = Uri.parse(widget.postData['kakaoUrl']);
+    try {
+      if (!await canLaunchUrl(url)) {
+        await launchUrl(url);
+      } else {
+        throw '실행할 수 없습니다';
+      }
+    } catch (e) {
+      print('URL 열기 오류 : $e');
     }
   }
 
@@ -166,8 +180,8 @@ class _PostDetailState extends State<PostDetail> {
       bottomNavigationBar: Padding(
         padding: const EdgeInsets.all(10),
         child: ElevatedButton(
-          // onPressed: _launchURL,
-          onPressed: () {},
+          onPressed: _launchURL,
+          // onPressed: () {},
           child: Text("가입하기"),
           style: ElevatedButton.styleFrom(
               elevation: 0, textStyle: TextStyle(fontSize: 15)),
