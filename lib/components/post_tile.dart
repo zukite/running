@@ -31,6 +31,7 @@ class MyPostTile extends StatelessWidget {
           leading: CircleAvatar(
             radius: 25,
             backgroundColor: Colors.grey[200],
+            backgroundImage: NetworkImage(image),
             child: ClipOval(
               child: Image.network(
                 image,

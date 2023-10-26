@@ -2,6 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:running/components/profile_list.dart';
 import 'package:running/pages/profile_modify.dart';
 
 class MyProfilePage extends StatefulWidget {
@@ -12,7 +13,6 @@ class MyProfilePage extends StatefulWidget {
 }
 
 class _MyProfilePageState extends State<MyProfilePage> {
-  // 사용자 정보
   final currentUser = FirebaseAuth.instance.currentUser!;
   final FirebaseStorage _storage = FirebaseStorage.instance;
   bool isJoinClick = true;
@@ -58,134 +58,129 @@ class _MyProfilePageState extends State<MyProfilePage> {
         builder: (context, snapshot) {
           if (snapshot.hasData) {
             final userData = snapshot.data!.data() as Map<String, dynamic>;
-            return ListView(
-              children: [
-                Padding(
-                  padding: const EdgeInsets.all(30.0),
-                  child: Column(
+            return Padding(
+              padding: const EdgeInsets.fromLTRB(25, 20, 25, 0),
+              child: Column(
+                children: [
+                  Row(
+                    crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Row(
-                        crossAxisAlignment: CrossAxisAlignment.start,
+                      CircleAvatar(
+                        backgroundColor: Colors.grey[500],
+                        radius: 60.0,
+                        backgroundImage:
+                            NetworkImage(userData['userImage'] ?? ''),
+                      ),
+                      const SizedBox(
+                        width: 60.0,
+                      ),
+                      Column(
                         children: [
-                          // 사용자 사진
-                          CircleAvatar(
-                            backgroundColor: Colors.grey[500],
-                            radius: 60.0,
-                            backgroundImage:
-                                NetworkImage(userData['userImage'] ?? ''),
+                          const SizedBox(
+                            height: 25.0,
+                          ),
+                          Text(
+                            userData['username'],
+                            style: TextStyle(
+                                fontSize: 23.0, color: Colors.grey[850]),
                           ),
                           const SizedBox(
-                            width: 60.0,
+                            height: 10.0,
                           ),
-                          Column(
-                            children: [
-                              const SizedBox(
-                                height: 25.0,
-                              ),
-                              Text(
-                                userData['username'],
-                                style: TextStyle(
-                                    fontSize: 23.0, color: Colors.grey[850]),
-                              ),
-                              const SizedBox(
-                                height: 10.0,
-                              ),
-                              Text(
-                                userData['userregion'],
-                                style: TextStyle(
-                                    fontSize: 23.0, color: Colors.grey[850]),
-                              ),
-                            ],
-                          ),
-                          const SizedBox(
-                            width: 30.0,
+                          Text(
+                            userData['userregion'],
+                            style: TextStyle(
+                                fontSize: 23.0, color: Colors.grey[850]),
                           ),
                         ],
                       ),
                       const SizedBox(
-                        height: 30.0,
-                      ),
-                      Divider(
-                        color: Colors.grey[900],
-                        indent: 8,
-                        endIndent: 8,
-                      ),
-                      Container(
-                        padding: const EdgeInsets.all(8.0),
-                        child: Row(
-                          mainAxisAlignment: MainAxisAlignment.spaceAround,
-                          children: [
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  isJoinClick = false;
-                                });
-                              },
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "개설 크루",
-                                    style: TextStyle(
-                                      fontSize: 15.0,
-                                      color: !isJoinClick
-                                          ? Colors.blue[300]
-                                          : Colors.grey[700],
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: const EdgeInsets.only(top: 8),
-                                    height: 2,
-                                    width:
-                                        MediaQuery.of(context).size.width / 2 -
-                                            38,
-                                    color: !isJoinClick
-                                        ? Colors.blue[300]
-                                        : Colors.grey[700],
-                                  )
-                                ],
-                              ),
-                            ),
-                            GestureDetector(
-                              onTap: () {
-                                setState(() {
-                                  isJoinClick = true;
-                                });
-                              },
-                              child: Column(
-                                children: [
-                                  Text(
-                                    "관심 크루",
-                                    style: TextStyle(
-                                      fontSize: 15.0,
-                                      color: isJoinClick
-                                          ? Colors.blue[300]
-                                          : Colors.grey[700],
-                                    ),
-                                  ),
-                                  Container(
-                                    margin: const EdgeInsets.only(top: 8),
-                                    height: 2.0,
-                                    width:
-                                        MediaQuery.of(context).size.width / 2 -
-                                            38,
-                                    color: isJoinClick
-                                        ? Colors.blue[300]
-                                        : Colors.grey[700],
-                                  ),
-                                ],
-                              ),
-                            ),
-                          ],
-                        ),
+                        width: 30.0,
                       ),
                     ],
                   ),
-                ),
-              ],
+                  const SizedBox(
+                    height: 20.0,
+                  ),
+                  Divider(
+                    color: Colors.grey[900],
+                    indent: 8,
+                    endIndent: 8,
+                  ),
+                  Container(
+                    padding: const EdgeInsets.all(8.0),
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.spaceAround,
+                      children: [
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              isJoinClick = false;
+                            });
+                          },
+                          child: Column(
+                            children: [
+                              Text(
+                                "개설 크루",
+                                style: TextStyle(
+                                  fontSize: 15.0,
+                                  color: !isJoinClick
+                                      ? Colors.blue[300]
+                                      : Colors.grey[700],
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(top: 8),
+                                height: 2,
+                                width:
+                                    MediaQuery.of(context).size.width / 2 - 38,
+                                color: !isJoinClick
+                                    ? Colors.blue[300]
+                                    : Colors.grey[700],
+                              )
+                            ],
+                          ),
+                        ),
+                        GestureDetector(
+                          onTap: () {
+                            setState(() {
+                              isJoinClick = true;
+                            });
+                          },
+                          child: Column(
+                            children: [
+                              Text(
+                                "관심 크루",
+                                style: TextStyle(
+                                  fontSize: 15.0,
+                                  color: isJoinClick
+                                      ? Colors.blue[300]
+                                      : Colors.grey[700],
+                                ),
+                              ),
+                              Container(
+                                margin: const EdgeInsets.only(top: 8),
+                                height: 2.0,
+                                width:
+                                    MediaQuery.of(context).size.width / 2 - 38,
+                                color: isJoinClick
+                                    ? Colors.blue[300]
+                                    : Colors.grey[700],
+                              ),
+                            ],
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                  if (!isJoinClick)
+                    MyProfilePostList(), // 개설 크루를 선택한 경우 MyProfilePostList 표시
+                ],
+              ),
             );
           } else if (snapshot.hasError) {
             return Center(
-              child: Text('Error${snapshot.error}'),
+              child: Text('Error: ${snapshot.error}'),
             );
           }
           return const Center(
