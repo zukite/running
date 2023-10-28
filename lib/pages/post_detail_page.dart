@@ -181,7 +181,6 @@ class _PostDetailState extends State<PostDetail> {
         padding: const EdgeInsets.all(10),
         child: ElevatedButton(
           onPressed: _launchURL,
-          // onPressed: () {},
           child: Text("가입하기"),
           style: ElevatedButton.styleFrom(
               elevation: 0, textStyle: TextStyle(fontSize: 15)),

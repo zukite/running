@@ -365,9 +365,19 @@ class _MyAddCrewState extends State<MyAddCrew> {
                   },
                 ),
               ),
-              const SizedBox(height: 8),
-              ElevatedButton(onPressed: postCrew, child: const Text("크루 만들기")),
+              // const SizedBox(height: 8),
             ],
+          ),
+        ),
+      ),
+      bottomNavigationBar: Padding(
+        padding: EdgeInsets.all(10),
+        child: ElevatedButton(
+          onPressed: postCrew,
+          child: const Text("크루 만들기"),
+          style: ElevatedButton.styleFrom(
+            elevation: 0,
+            textStyle: TextStyle(fontSize: 15),
           ),
         ),
       ),
