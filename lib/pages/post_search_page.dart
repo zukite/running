@@ -2,7 +2,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 
-import '../components/search_post_list.dart';
+import '../components/post_search_list.dart';
 
 class PostSearch extends StatefulWidget {
   const PostSearch({super.key});

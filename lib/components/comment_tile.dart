@@ -22,37 +22,35 @@ class CommentTile extends StatelessWidget {
         elevation: 0.7, // 그림자 제거
         child: ListTile(
           title: Row(
-            mainAxisAlignment: MainAxisAlignment
-                .spaceBetween, // 양 끝에 배치하려면 MainAxisAlignment 설정
             children: [
               Text(
                 comment.text,
                 textAlign: TextAlign.left,
               ),
-              OutlinedButton(
-                onPressed: () {},
-                style: ButtonStyle(
-                  padding: MaterialStateProperty.all(
-                      EdgeInsets.all(0)), // 내용 주위의 간격 설정
-                  minimumSize:
-                      MaterialStateProperty.all(Size(45, 25)), // 버튼의 최소 크기 설정
-                  side: MaterialStateProperty.all(BorderSide(
-                    width: 1, // 아웃라인의 크기 설정
-                    color: Colors.grey, // 아웃라인 색상 설정
-                  )),
-                ),
-                child: Icon(
-                  Icons.chat_bubble_outline,
-                  color: Colors.grey[400], // 원하는 색상으로 변경
-                  size: 15, // 원하는 크기로 변경),
-                ),
-              ),
+              // OutlinedButton(
+              //   onPressed: () {},
+              //   style: ButtonStyle(
+              //     padding: MaterialStateProperty.all(
+              //         EdgeInsets.all(0)), // 내용 주위의 간격 설정
+              //     minimumSize:
+              //         MaterialStateProperty.all(Size(45, 25)), // 버튼의 최소 크기 설정
+              //     side: MaterialStateProperty.all(BorderSide(
+              //       width: 1, // 아웃라인의 크기 설정
+              //       color: Colors.grey, // 아웃라인 색상 설정
+              //     )),
+              //   ),
+              //   child: Icon(
+              //     Icons.chat_bubble_outline,
+              //     color: Colors.grey[400], // 원하는 색상으로 변경
+              //     size: 15, // 원하는 크기로 변경),
+              //   ),
+              // ),
             ],
           ),
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽 정렬
             children: [
-              Text(comment.text),
+              Text(comment.authorName ?? "Unknown Author"),
               Text(
                 formattedTimestamp,
                 style: TextStyle(

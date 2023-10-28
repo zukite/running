@@ -40,6 +40,8 @@ class _AddQnaState extends State<AddQna> {
 
       if (qtitle.isNotEmpty && qdesc.isNotEmpty) {
         String postKey = getRandomString(16);
+        final userInfo = await getUserInfo(currentUser!.uid); // 사용자 정보 가져오기
+
         await FirebaseFirestore.instance
             .collection('QnAPosts')
             .doc(postKey)
@@ -48,7 +50,7 @@ class _AddQnaState extends State<AddQna> {
           'authorUid': currentUser?.uid,
           'title': qtitle,
           'desc': qdesc,
-          'authorName': currentUser?.email?.split('@')[0],
+          'authorName': userInfo['username'],
           'timestamp': FieldValue.serverTimestamp(),
         });
         // 성공적으로 크루를 만들었을 때 다이얼로그 닫기
@@ -80,6 +82,13 @@ class _AddQnaState extends State<AddQna> {
         ),
       );
     }
+  }
+
+  Future<Map<String, dynamic>> getUserInfo(String userUid) async {
+    final userRef =
+        FirebaseFirestore.instance.collection('User').doc(currentUser?.email);
+    final userData = await userRef.get();
+    return userData.data() as Map<String, dynamic>;
   }
 
   @override

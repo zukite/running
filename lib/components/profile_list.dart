@@ -4,9 +4,18 @@ import 'package:flutter/material.dart';
 import 'package:running/components/post_tile.dart';
 import 'package:running/pages/post_detail_page.dart';
 
-class MyProfilePostList extends StatelessWidget {
-  const MyProfilePostList({super.key});
+class MyProfilePostList extends StatefulWidget {
+  final User currentUser;
+  const MyProfilePostList({
+    super.key,
+    required this.currentUser,
+  });
 
+  @override
+  State<MyProfilePostList> createState() => _MyProfilePostListState();
+}
+
+class _MyProfilePostListState extends State<MyProfilePostList> {
   @override
   Widget build(BuildContext context) {
     final User? currentUser = FirebaseAuth.instance.currentUser;
@@ -32,33 +41,36 @@ class MyProfilePostList extends StatelessWidget {
             return authorUid == currentUser?.uid; // 현재 사용자의 UID와 일치하는 게시글만 반환
           }).toList();
 
-          return ListView.builder(
-            itemCount: filteredPosts.length,
-            itemBuilder: (context, index) {
-              final post = filteredPosts[index].data() as Map<String, dynamic>;
-              final imageUrl = post['imageUrl'];
-              final timestamp = post['timestamp'];
+          return Expanded(
+            child: ListView.builder(
+              itemCount: filteredPosts.length,
+              itemBuilder: (context, index) {
+                final post =
+                    filteredPosts[index].data() as Map<String, dynamic>;
+                final imageUrl = post['imageUrl'];
+                final timestamp = post['timestamp'];
 
-              if (timestamp != null && timestamp is Timestamp) {
-                return GestureDetector(
-                  child: MyPostTile(
-                    title: post['crewName'],
-                    timestamp: post['timestamp'],
-                    image: imageUrl,
-                  ),
-                  onTap: () {
-                    Navigator.of(context).push(MaterialPageRoute(
-                      builder: (context) => PostDetail(
-                        postData: post,
-                        currentUser: currentUser,
-                      ),
-                    ));
-                  },
-                );
-              } else {
-                return Container();
-              }
-            },
+                if (timestamp != null && timestamp is Timestamp) {
+                  return GestureDetector(
+                    child: MyPostTile(
+                      title: post['crewName'],
+                      timestamp: post['timestamp'],
+                      image: imageUrl,
+                    ),
+                    onTap: () {
+                      Navigator.of(context).push(MaterialPageRoute(
+                        builder: (context) => PostDetail(
+                          postData: post,
+                          currentUser: currentUser,
+                        ),
+                      ));
+                    },
+                  );
+                } else {
+                  return Container();
+                }
+              },
+            ),
           );
         }
       },

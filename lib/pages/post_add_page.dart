@@ -77,10 +77,10 @@ class _MyAddCrewState extends State<MyAddCrew> {
             crewimageUrl = downloadUrl;
           }
         }
-
+        final userInfo = await getUserInfo(currentUser!.uid); // 사용자 정보 가져오기
         await FirebaseFirestore.instance.collection('Posts').doc(postKey).set({
           'key': postKey,
-          'authorName': currentUser?.email?.split('@')[0],
+          'authorName': userInfo['username'],
           'authorUid': currentUser?.uid, // 작성자의 UID를 저장
           'imageUrl': crewimageUrl,
           'crewName': crewName,
@@ -142,6 +142,13 @@ class _MyAddCrewState extends State<MyAddCrew> {
         selectedImage = true; // 이미지가 선택되었음을 표시
       });
     }
+  }
+
+  Future<Map<String, dynamic>> getUserInfo(String userUid) async {
+    final userRef =
+        FirebaseFirestore.instance.collection('User').doc(currentUser?.email);
+    final userData = await userRef.get();
+    return userData.data() as Map<String, dynamic>;
   }
 
   @override

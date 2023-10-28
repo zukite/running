@@ -174,7 +174,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     ),
                   ),
                   if (!isJoinClick)
-                    MyProfilePostList(), // 개설 크루를 선택한 경우 MyProfilePostList 표시
+                    MyProfilePostList(
+                        currentUser:
+                            currentUser), // 개설 크루를 선택한 경 우 MyProfilePostList 표시
                 ],
               ),
             );
