@@ -20,7 +20,7 @@ class QnaPostTile extends StatelessWidget {
     final dateTime = timestamp.toDate();
 
     // DateTime을 특정 형식으로 포맷
-    final formattedTimestamp = DateFormat('MM/dd').format(dateTime);
+    final formattedTimestamp = DateFormat('MM/dd HH:mm').format(dateTime);
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 4),
@@ -38,7 +38,12 @@ class QnaPostTile extends StatelessWidget {
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽 정렬
             children: [
-              Text(subtitle),
+              Text(
+                subtitle, // subtitle을 한 줄로 표시
+                overflow: TextOverflow.ellipsis, // 오버플로우 발생 시 ...으로 표시
+                maxLines: 1, // 최대 1줄만 표시
+              ),
+              const SizedBox(height: 3),
               Text(
                 formattedTimestamp,
                 style: TextStyle(

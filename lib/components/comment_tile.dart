@@ -40,6 +40,48 @@ class CommentTile extends StatelessWidget {
     }
   }
 
+  void editComment(BuildContext context) {
+    if (currentUser != null && currentUser!.uid == comment.authorId) {
+      final TextEditingController textEditingController =
+          TextEditingController(text: comment.text);
+
+      showDialog(
+        context: context,
+        builder: (context) {
+          return AlertDialog(
+            title: Text("댓글 수정"),
+            content: TextField(
+              controller: textEditingController,
+            ),
+            actions: [
+              TextButton(
+                onPressed: () {
+                  // 수정한 내용을 Firestore에 업데이트
+                  FirebaseFirestore.instance
+                      .collection('QnAPosts')
+                      .doc(postKey)
+                      .collection('comments')
+                      .doc(commentId)
+                      .update({'text': textEditingController.text});
+                  Navigator.pop(context);
+                },
+                child: Text("수정"),
+              ),
+              TextButton(
+                onPressed: () {
+                  Navigator.pop(context);
+                },
+                child: Text("취소"),
+              ),
+            ],
+          );
+        },
+      );
+    } else {
+      print("실패");
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     // Timestamp를 DateTime으로 변환
@@ -75,7 +117,7 @@ class CommentTile extends StatelessWidget {
                   const Spacer(), // 아이콘 버튼을 오른쪽으로 밀어 줍니다.
                   IconButton(
                     onPressed: () {
-                      // 댓글 삭제 함수 호출
+                      editComment(context);
                     },
                     icon: const Icon(Icons.edit),
                     padding: const EdgeInsets.all(0), // 모든 패딩 제거
