@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:running/components/drawer.dart';
 import 'package:running/components/post_list.dart';
 import 'package:running/pages/post_add_page.dart';
@@ -155,7 +156,7 @@ class _MyHomePageState extends State<MyHomePage> {
                   child: Column(
                     children: [
                       Text(
-                        "추천 크루",
+                        "크루 지도",
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
@@ -178,19 +179,40 @@ class _MyHomePageState extends State<MyHomePage> {
             const Expanded(
               child: MyPostList(), // 모집 중인 크루를 선택한 경우 MyPostList 표시
             ),
+          if (!isClick)
+            Expanded(
+              child: GoogleMap(
+                mapType: MapType.normal, // 지도 유형 설정
+                initialCameraPosition: CameraPosition(
+                  target: LatLng(37.7749, -122.4194), // 초기 중심 좌표
+                  zoom: 12.0, // 초기 줌 레벨
+                ),
+                markers: {
+                  Marker(
+                    markerId: MarkerId('marker_id'),
+                    position: LatLng(37.7749, -122.4194),
+                    // infoWindow: InfoWindow(title: '마커 제목'),
+                  ),
+                },
+                myLocationEnabled: true, // 현재 위치 버튼 활성화
+                mapToolbarEnabled: true, // 지도 도구 모음 활성화
+              ),
+            ),
         ],
       ),
 
       // 게시글 추가 버튼
-      floatingActionButton: FloatingActionButton(
-        onPressed: () {
-          Navigator.of(context).push(
-            MaterialPageRoute(builder: (context) => const MyAddCrew()),
-          );
-        },
-        elevation: 0.0,
-        child: const Icon(Icons.add),
-      ),
+      floatingActionButton: isClick // isClick 변수가 true (모집 중인 크루 선택)일 때만 버튼 표시
+          ? FloatingActionButton(
+              onPressed: () {
+                Navigator.of(context).push(
+                  MaterialPageRoute(builder: (context) => const MyAddCrew()),
+                );
+              },
+              elevation: 0.0,
+              child: const Icon(Icons.add),
+            )
+          : null, // 아닌 경우 null을 반환하여 버튼을 숨김
     );
   }
 }
