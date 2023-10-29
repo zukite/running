@@ -1,4 +1,5 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:running/components/comment_tile.dart';
 import '../utils/comment.dart';
@@ -10,7 +11,7 @@ class CommentList extends StatelessWidget {
     required this.postKey,
     Key? key,
   }) : super(key: key);
-
+  final currentUser = FirebaseAuth.instance.currentUser!;
   @override
   Widget build(BuildContext context) {
     return StreamBuilder<QuerySnapshot>(
@@ -34,6 +35,9 @@ class CommentList extends StatelessWidget {
                 .map(
                   (commentDoc) => CommentTile(
                     comment: Comment.fromDocument(commentDoc),
+                    currentUser: currentUser,
+                    postKey: postKey,
+                    commentId: commentDoc.id, // 댓글의 고유 ID를 전달
                   ),
                 )
                 .toList(),

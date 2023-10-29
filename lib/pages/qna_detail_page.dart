@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
@@ -44,12 +46,27 @@ class _QnaDetailState extends State<QnaDetail> {
     }
   }
 
+  // 임의의 댓글 고유 ID 생성
+  String generateRandomCommentId() {
+    final random = Random();
+    const chars = 'abcdefghijklmnopqrstuvwxyz0123456789';
+    final idLength = 20; // 원하는 길이로 조정 가능
+
+    return String.fromCharCodes(
+      List.generate(idLength, (index) {
+        return chars.codeUnitAt(random.nextInt(chars.length));
+      }),
+    );
+  }
+
   void postComment() async {
     String commentText = textController.text;
     // 사용자 이름을 getUsername 함수를 사용하여 가져오기
     String userName = await getUsername(widget.currentUser!.uid);
 
     if (commentText.isNotEmpty) {
+      // 댓글의 고유 ID 생성
+      final commentId = generateRandomCommentId();
       Comment comment = Comment(
         authorId: widget.currentUser!.uid, // 현재 사용자의 UID
         authorName: userName,
@@ -62,7 +79,8 @@ class _QnaDetailState extends State<QnaDetail> {
           .collection('QnAPosts')
           .doc(widget.postData['key'])
           .collection('comments')
-          .add({
+          .doc(commentId)
+          .set({
         'authorId': comment.authorId,
         'authorName': comment.authorName,
         'text': comment.text,
@@ -193,7 +211,9 @@ class _QnaDetailState extends State<QnaDetail> {
                         ],
                       ),
                     ),
-                    CommentList(postKey: widget.postData['key']),
+                    CommentList(
+                      postKey: widget.postData['key'],
+                    ),
                   ],
                 ),
               ),
