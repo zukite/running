@@ -1,5 +1,3 @@
-// ignore_for_file: use_build_context_synchronously
-
 import 'dart:io';
 import 'dart:math';
 import 'dart:typed_data';
@@ -7,6 +5,8 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:running/pages/home_page.dart';
 
@@ -149,6 +149,93 @@ class _MyAddCrewState extends State<MyAddCrew> {
         FirebaseFirestore.instance.collection('User').doc(currentUser?.email);
     final userData = await userRef.get();
     return userData.data() as Map<String, dynamic>;
+  }
+
+  GoogleMapController? _mapController;
+  LatLng? selectedLocation;
+  LatLng? startLocation;
+  LatLng? destinationLocation;
+
+  Future<String?> _getAddress(LatLng location) async {
+    final List<Placemark> placemarks =
+        await placemarkFromCoordinates(location.latitude, location.longitude);
+    if (placemarks.isEmpty) {
+      return '주소를 찾을 수 없습니다.';
+    }
+    final Placemark placemark = placemarks[0];
+    return placemark.street ?? '주소를 찾을 수 없습니다.';
+  }
+
+  Set<Marker> _markers = Set<Marker>();
+
+  void showLocationPickDialog({required bool isStartLocation}) async {
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              content: Container(
+                height: 300, // Adjust the height as needed
+                child: GoogleMap(
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(37.7749, -122.4194),
+                    zoom: 10,
+                  ),
+                  onMapCreated: (controller) {
+                    setState(() {
+                      _mapController = controller;
+                    });
+                  },
+                  onTap: (location) {
+                    setState(() {
+                      selectedLocation = location;
+                      _markers.clear();
+                      _markers.add(
+                        Marker(
+                          markerId: MarkerId("SelectedLocation"),
+                          position: selectedLocation!,
+                        ),
+                      );
+                    });
+                  },
+                  markers: _markers, // 마커 표시
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () async {
+                    if (selectedLocation != null) {
+                      if (isStartLocation) {
+                        setState(() {
+                          startLocation = selectedLocation;
+                        });
+                      } else {
+                        setState(() {
+                          destinationLocation = selectedLocation;
+                        });
+                      }
+
+                      // 주소를 가져와 화면에 표시
+                      final String? address =
+                          await _getAddress(selectedLocation!);
+
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(
+                          content: Text('선택한 위치 주소: $address'),
+                        ),
+                      );
+                    }
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('선택'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
   }
 
   @override
@@ -333,6 +420,50 @@ class _MyAddCrewState extends State<MyAddCrew> {
                   onChanged: (value) {
                     crewRegion = value;
                   },
+                ),
+              ),
+              const SizedBox(height: 8),
+              GestureDetector(
+                onTap: () {
+                  showLocationPickDialog(isStartLocation: true);
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.blue),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment:
+                            MainAxisAlignment.start, // 아이콘을 왼쪽에 정렬
+                        children: [
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Icon(
+                            Icons.room,
+                            color: Colors.grey[600],
+                            size: 18,
+                          ),
+                          Container(
+                            margin: const EdgeInsets.only(
+                                left: 130), // 아이콘과 텍스트 사이에 간격을 줍니다
+                            child: Text(
+                              "시작위치 찾기",
+                              style: TextStyle(
+                                color: Colors.grey[500],
+                                fontSize: 15,
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 8),

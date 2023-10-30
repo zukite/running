@@ -8,6 +8,7 @@ import 'package:running/pages/post_add_page.dart';
 import 'package:running/pages/post_search_page.dart';
 import 'package:running/pages/profile_page.dart';
 import 'package:running/pages/qna_page.dart';
+import 'package:running/utils/current_location.dart';
 
 class MyHomePage extends StatefulWidget {
   const MyHomePage({super.key});
@@ -19,6 +20,9 @@ class MyHomePage extends StatefulWidget {
 class _MyHomePageState extends State<MyHomePage> {
   final currentUser = FirebaseAuth.instance.currentUser!;
   bool isClick = true; // 클릭했을 때 색상 변경위한 변수
+  GoogleMapController? _mapController;
+
+  final CurrentLocation currentLocation = CurrentLocation();
 
   void signOut() {
     FirebaseAuth.instance.signOut();
@@ -61,6 +65,16 @@ class _MyHomePageState extends State<MyHomePage> {
         builder: (context) => const MyAddCrew(),
       ),
     );
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation();
+  }
+
+  Future<void> _getCurrentLocation() async {
+    await currentLocation.getCurrentLocation(); // CurrentLocation 클래스로 위치 설정 호출
   }
 
   @override
@@ -184,18 +198,27 @@ class _MyHomePageState extends State<MyHomePage> {
               child: GoogleMap(
                 mapType: MapType.normal, // 지도 유형 설정
                 initialCameraPosition: CameraPosition(
-                  target: LatLng(37.7749, -122.4194), // 초기 중심 좌표
-                  zoom: 12.0, // 초기 줌 레벨
+                  target: LatLng(
+                    currentLocation.currentPosition?.latitude ?? 0.0,
+                    currentLocation.currentPosition?.longitude ?? 0.0,
+                  ),
+                  zoom: 15.0, // 초기 줌 레벨
                 ),
                 markers: {
                   Marker(
                     markerId: MarkerId('marker_id'),
-                    position: LatLng(37.7749, -122.4194),
-                    // infoWindow: InfoWindow(title: '마커 제목'),
+                    position: LatLng(
+                      currentLocation.currentPosition?.latitude ?? 0.0,
+                      currentLocation.currentPosition?.longitude ?? 0.0,
+                    ),
+                    infoWindow: InfoWindow(title: '현재위치'), // 마커 클릭하면 나타나는 글씨
                   ),
                 },
                 myLocationEnabled: true, // 현재 위치 버튼 활성화
                 mapToolbarEnabled: true, // 지도 도구 모음 활성화
+                onMapCreated: (controller) {
+                  _mapController = controller;
+                },
               ),
             ),
         ],
