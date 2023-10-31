@@ -4,6 +4,8 @@ import 'dart:typed_data';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:geocoding/geocoding.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 
 class EditPost extends StatefulWidget {
@@ -25,22 +27,33 @@ class _EditPostState extends State<EditPost> {
   TextEditingController crewRegionController = TextEditingController();
   TextEditingController crewUrlController = TextEditingController();
   Uint8List? _image; // 이미지 데이터를 저장하기 위한 변수
+  String? imageUrl; // imageUrl 변수 선언
   final ImagePicker _imagePicker = ImagePicker(); // 이미지 피커
+  LatLng? startLocation;
+  LatLng? destinationLocation;
+  GoogleMapController? _mapController;
+  String? startLocationText;
+  String? destinationLocationText;
+  bool selectedImage = false; // 이미지가 선택되었는지 여부를 나타내는 변수
 
   @override
   void initState() {
     super.initState();
     // 초기 데이터로 기존 게시글 데이터를 채우기
+
     crewNameController.text = widget.postData['crewName'];
     crewDescController.text = widget.postData['explain'];
     crewPeopleNumController.text = widget.postData['num'];
     crewRegionController.text = widget.postData['region'];
     crewUrlController.text = widget.postData['kakaoUrl'];
+    startLocationText = widget.postData['startLocationText'] ?? '';
+    destinationLocationText = widget.postData['destinationLocationText'] ?? '';
+    imageUrl = widget.postData['imageUrl'] ?? ''; // imageUrl 초기화
   }
 
   Future<void> updatePost() async {
-    // 이미지를 업데이트하려면 이미지가 선택되었는지 확인하고 이미지 업로드를 수행합니다.
-    if (_image != null) {
+    // 이미지가 선택되지 않았을 경우 Firebase Storage에 업로드를 수행하지 않음
+    if (selectedImage) {
       String imagePath =
           "post_images/${widget.postData['authorUid']}_${widget.postData['key']}.jpg";
       Reference ref = FirebaseStorage.instance.ref().child(imagePath);
@@ -61,7 +74,24 @@ class _EditPostState extends State<EditPost> {
       'region': crewRegionController.text,
       'kakaoUrl': crewUrlController.text,
       'imageUrl': widget.postData['imageUrl'], // 이미지 URL을 업데이트한 URL로 변경
+      'startLocationText': startLocationText, // 새로운 주소 업데이트
+      'destinationLocationText': destinationLocationText, // 새로운 주소 업데이트
     };
+    if (startLocationText != null) {
+      GeoPoint? startLocationPoint =
+          await _getGeoPointFromAddress(startLocationText!);
+      if (startLocationPoint != null) {
+        updatedData['startLocation'] = startLocationPoint;
+      }
+    }
+
+    if (destinationLocationText != null) {
+      GeoPoint? destinationLocationPoint =
+          await _getGeoPointFromAddress(destinationLocationText!);
+      if (destinationLocationPoint != null) {
+        updatedData['destinationLocation'] = destinationLocationPoint;
+      }
+    }
 
     // Firestore에서 해당 게시물 업데이트
     await FirebaseFirestore.instance
@@ -75,19 +105,124 @@ class _EditPostState extends State<EditPost> {
 
   Future<void> selectImage() async {
     try {
-      if (_image == null) {
-        var image = await _imagePicker.pickImage(source: ImageSource.gallery);
+      var image = await _imagePicker.pickImage(source: ImageSource.gallery);
 
-        if (image != null) {
-          setState(() {
-            _image = File(image.path).readAsBytesSync();
-          });
-        }
+      if (image != null) {
+        setState(() {
+          _image = File(image.path).readAsBytesSync();
+          // 이미지가 선택되었으므로 selectedImage를 true로 설정
+          selectedImage = true;
+        });
       }
     } catch (e) {
       // 이미지 피커가 이미 열려있을 때의 오류 처리
       print("이미지 피커 오류: $e");
     }
+  }
+
+  Future<String>? _getAddress(LatLng location) async {
+    final List<Placemark> placemarks =
+        await placemarkFromCoordinates(location.latitude, location.longitude);
+    if (placemarks.isEmpty) {
+      return '주소를 찾을 수 없습니다.';
+    }
+    final Placemark placemark = placemarks[0];
+    return placemark.street ?? '주소를 찾을 수 없습니다.';
+  }
+
+  Future<void> showLocationPickDialog({required bool isStartLocation}) async {
+    LatLng? selectedLocation;
+    await showDialog(
+      context: context,
+      builder: (BuildContext context) {
+        return StatefulBuilder(
+          builder: (context, setState) {
+            return AlertDialog(
+              content: Container(
+                height: 300, // 필요에 따라 조정
+                child: GoogleMap(
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(37.7749, -122.4194), // 초기 위치
+                    zoom: 10, // 초기 확대 수준
+                  ),
+                  onMapCreated: (controller) {
+                    setState(() {
+                      _mapController = controller;
+                    });
+                  },
+                  onTap: (location) async {
+                    setState(() {
+                      selectedLocation = location;
+                    });
+                  },
+                  markers: Set<Marker>.from([
+                    if (startLocation != null && isStartLocation)
+                      Marker(
+                        markerId: MarkerId("StartLocation"),
+                        position: startLocation!,
+                      ),
+                    if (destinationLocation != null && !isStartLocation)
+                      Marker(
+                        markerId: MarkerId("DestinationLocation"),
+                        position: destinationLocation!,
+                      ),
+                  ]),
+                ),
+              ),
+              actions: <Widget>[
+                TextButton(
+                  onPressed: () {
+                    if (selectedLocation != null) {
+                      if (isStartLocation) {
+                        setState(() {
+                          startLocation = selectedLocation;
+                          startLocationText = null; // 새로운 주소 선택 시 초기화
+                        });
+                      } else {
+                        setState(() {
+                          destinationLocation = selectedLocation;
+                          destinationLocationText = null; // 새로운 주소 선택 시 초기화
+                        });
+                      }
+                    }
+                    Navigator.of(context).pop();
+                  },
+                  child: Text('선택'),
+                ),
+              ],
+            );
+          },
+        );
+      },
+    );
+
+    // 다이얼로그가 닫힌 후에 주소를 가져오고 UI 업데이트
+    if (selectedLocation != null) {
+      final String? address = await _getAddress(selectedLocation!);
+      if (address != null) {
+        if (isStartLocation) {
+          setState(() {
+            startLocationText = address;
+          });
+        } else {
+          setState(() {
+            destinationLocationText = address;
+          });
+        }
+      }
+    }
+  }
+
+  Future<GeoPoint?> _getGeoPointFromAddress(String address) async {
+    try {
+      List<Location> locations = await locationFromAddress(address);
+      if (locations.isNotEmpty) {
+        return GeoPoint(locations.first.latitude, locations.first.longitude);
+      }
+    } catch (e) {
+      print("주소에서 위치로 변환 중 오류 발생: $e");
+    }
+    return null;
   }
 
   @override
@@ -122,23 +257,30 @@ class _EditPostState extends State<EditPost> {
               child: Stack(
                 alignment: Alignment.center,
                 children: [
-                  if (_image != null)
-                    Image.memory(
-                      _image!,
-                      fit: BoxFit.fill,
+                  GestureDetector(
+                    onTap: selectImage,
+                    child: Container(
                       height: 150,
                       width: MediaQuery.of(context).size.width,
-                    )
-                  else
-                    IconButton(
-                      icon: Icon(
-                        Icons.add_a_photo,
-                        color: Colors.grey[500],
-                      ),
-                      onPressed: () {
-                        selectImage();
-                      },
+                      child: selectedImage
+                          ? ClipRRect(
+                              borderRadius: BorderRadius.circular(10.0),
+                              child: Image.memory(
+                                _image!,
+                                fit: BoxFit.fill,
+                              ),
+                            )
+                          : imageUrl != null
+                              ? ClipRRect(
+                                  borderRadius: BorderRadius.circular(10.0),
+                                  child: Image.network(imageUrl!),
+                                )
+                              : Icon(
+                                  Icons.add_a_photo,
+                                  color: Colors.grey[500],
+                                ),
                     ),
+                  ),
                 ],
               ),
             ),
@@ -249,6 +391,92 @@ class _EditPostState extends State<EditPost> {
                   contentPadding: const EdgeInsets.all(10),
                 ),
                 textAlign: TextAlign.center,
+              ),
+            ),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () {
+                showLocationPickDialog(isStartLocation: true);
+              },
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.blue),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start, // 아이콘을 왼쪽에 정렬
+                      children: [
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Icon(
+                          Icons.room,
+                          color: Colors.grey[600],
+                          size: 18,
+                        ),
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              startLocationText ?? '',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            const SizedBox(height: 8),
+            GestureDetector(
+              onTap: () {
+                showLocationPickDialog(isStartLocation: false);
+              },
+              child: Container(
+                margin: const EdgeInsets.symmetric(horizontal: 16),
+                decoration: BoxDecoration(
+                  color: Colors.grey[300],
+                  borderRadius: BorderRadius.circular(10),
+                  border: Border.all(color: Colors.blue),
+                ),
+                child: Padding(
+                  padding: const EdgeInsets.all(10.0),
+                  child: Center(
+                    child: Row(
+                      mainAxisAlignment: MainAxisAlignment.start, // 아이콘을 왼쪽에 정렬
+                      children: [
+                        SizedBox(
+                          width: 5,
+                        ),
+                        Icon(
+                          Icons.room,
+                          color: Colors.grey[600],
+                          size: 18,
+                        ),
+                        Expanded(
+                          child: Center(
+                            child: Text(
+                              destinationLocationText ?? '',
+                              style: TextStyle(
+                                color: Colors.black,
+                                fontSize: 15,
+                              ),
+                            ),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
               ),
             ),
             const SizedBox(height: 8),

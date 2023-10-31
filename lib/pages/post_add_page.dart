@@ -63,7 +63,8 @@ class _MyAddCrewState extends State<MyAddCrew> {
               crewPeopleNum.isNotEmpty &&
               crewRegion.isNotEmpty &&
               crewUrl.isNotEmpty &&
-              startLocationText.isNotEmpty) {
+              startLocationText.isNotEmpty &&
+              destinationLocationText.isNotEmpty) {
         String postKey = getRandomString(16);
 
         if (_image != null) {
@@ -90,6 +91,7 @@ class _MyAddCrewState extends State<MyAddCrew> {
           'region': crewRegion,
           'kakaoUrl': crewUrl,
           'startLocationText': startLocationText, // 'startLocationText' 필드 추가
+          'destinationLocationText': destinationLocationText,
           'timestamp': FieldValue.serverTimestamp(),
         });
 
@@ -233,10 +235,15 @@ class _MyAddCrewState extends State<MyAddCrew> {
     if (selectedLocation != null) {
       final String? address = await _getAddress(selectedLocation!);
       if (address != null) {
-        if (mounted) {
+        if (isStartLocation) {
           setState(() {
-            startLocationText = "$address"; // 주소 업데이트
-            locationTextColor = Colors.black; // 색상 변경
+            startLocationText = address;
+            locationTextColor = Colors.black; // 주소를 가져온 후 색상을 변경
+          });
+        } else {
+          setState(() {
+            destinationLocationText = address;
+            locationTextColor = Colors.black; // 주소를 가져온 후 색상을 변경
           });
         }
       }
@@ -244,6 +251,7 @@ class _MyAddCrewState extends State<MyAddCrew> {
   }
 
   String startLocationText = "시작위치 찾기"; // 초기에는 "시작위치 찾기"로 설정
+  String destinationLocationText = "도착위치 찾기";
   Color? locationTextColor = Colors.grey[500]; // 초기 텍스트 색상
   @override
   Widget build(BuildContext context) {
@@ -460,6 +468,50 @@ class _MyAddCrewState extends State<MyAddCrew> {
                             child: Center(
                               child: Text(
                                 startLocationText,
+                                style: TextStyle(
+                                  color: locationTextColor,
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+              ),
+              const SizedBox(height: 8),
+              GestureDetector(
+                onTap: () {
+                  showLocationPickDialog(isStartLocation: false);
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.blue),
+                  ),
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment:
+                            MainAxisAlignment.start, // 아이콘을 왼쪽에 정렬
+                        children: [
+                          SizedBox(
+                            width: 5,
+                          ),
+                          Icon(
+                            Icons.room,
+                            color: Colors.grey[600],
+                            size: 18,
+                          ),
+                          Expanded(
+                            child: Center(
+                              child: Text(
+                                destinationLocationText,
                                 style: TextStyle(
                                   color: locationTextColor,
                                   fontSize: 15,
