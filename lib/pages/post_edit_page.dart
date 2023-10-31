@@ -130,6 +130,8 @@ class _EditPostState extends State<EditPost> {
     return placemark.street ?? '주소를 찾을 수 없습니다.';
   }
 
+  Set<Marker> _markers = {};
+
   Future<void> showLocationPickDialog({required bool isStartLocation}) async {
     LatLng? selectedLocation;
     await showDialog(
@@ -154,19 +156,30 @@ class _EditPostState extends State<EditPost> {
                     setState(() {
                       selectedLocation = location;
                     });
+                    //     },
+                    //     markers: Set<Marker>.from([
+                    //       if (startLocation != null && isStartLocation)
+                    //         Marker(
+                    //           markerId: MarkerId("StartLocation"),
+                    //           position: startLocation!,
+                    //         ),
+                    //       if (destinationLocation != null && !isStartLocation)
+                    //         Marker(
+                    //           markerId: MarkerId("DestinationLocation"),
+                    //           position: destinationLocation!,
+                    //         ),
+                    //     ]),
+                    //   ),
+                    // ),
+
+                    // 선택한 위치에 마커를 추가합니다.
+                    _markers.clear();
+                    _markers.add(Marker(
+                      markerId: MarkerId("SelectedLocation"),
+                      position: selectedLocation!,
+                    ));
                   },
-                  markers: Set<Marker>.from([
-                    if (startLocation != null && isStartLocation)
-                      Marker(
-                        markerId: MarkerId("StartLocation"),
-                        position: startLocation!,
-                      ),
-                    if (destinationLocation != null && !isStartLocation)
-                      Marker(
-                        markerId: MarkerId("DestinationLocation"),
-                        position: destinationLocation!,
-                      ),
-                  ]),
+                  markers: _markers, // 마커를 표시합니다.
                 ),
               ),
               actions: <Widget>[

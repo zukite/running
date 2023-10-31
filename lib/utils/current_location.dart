@@ -1,17 +1,23 @@
 import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 
 class CurrentLocation {
-  Position? _currentPosition;
+  LatLng? _currentPosition;
+
+  void updateCurrentPosition(Position position) {
+    _currentPosition = LatLng(position.latitude, position.longitude);
+  }
 
   Future<void> getCurrentLocation() async {
     try {
-      _currentPosition = await Geolocator.getCurrentPosition(
-        desiredAccuracy: LocationAccuracy.best,
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
       );
+      updateCurrentPosition(position);
     } catch (e) {
       print('Error getting current location: $e');
     }
   }
 
-  Position? get currentPosition => _currentPosition;
+  LatLng? get currentPosition => _currentPosition;
 }

@@ -1,7 +1,10 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:geolocator/geolocator.dart';
+import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:running/pages/post_edit_page.dart';
+import 'package:running/utils/current_location.dart';
 import 'package:url_launcher/url_launcher.dart';
 // import 'package:url_launcher/url_launcher.dart';
 
@@ -22,6 +25,11 @@ class PostDetail extends StatefulWidget {
 class _PostDetailState extends State<PostDetail> {
   // final FirebaseAuth _auth = FirebaseAuth.instance;
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  Set<Marker> _markers = {};
+  LatLng? startLocation;
+  LatLng? destinationLocation;
+  GoogleMapController? _mapController;
+  final CurrentLocation currentLocation = CurrentLocation();
 
   void deletePost() async {
     if (widget.currentUser != null &&
@@ -53,6 +61,82 @@ class _PostDetailState extends State<PostDetail> {
     } catch (e) {
       print('URL 열기 오류 : $e');
     }
+  }
+
+  // GoogleMap 위에 마커를 추가하고 업데이트하는 함수를 작성합니다.
+  // _addMarkers 함수 수정
+  void _addMarkers() {
+    _markers.clear(); // 마커를 초기화합니다.
+
+    // 시작 위치 마커 추가
+    if (startLocation != null) {
+      _markers.add(
+        Marker(
+          markerId: MarkerId("시작위치"),
+          position: startLocation!,
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+            BitmapDescriptor.hueGreen,
+          ), // 시작 위치 마커 아이콘 설정
+          infoWindow: InfoWindow(
+            title: "출발 위치",
+            snippet: widget.postData['startLocationText'], // 주소로 변환된 값
+          ),
+        ),
+      );
+    }
+
+    // 도착 위치 마커 추가
+    if (destinationLocation != null) {
+      _markers.add(
+        Marker(
+          markerId: MarkerId("도착위치"),
+          position: destinationLocation!,
+          icon: BitmapDescriptor.defaultMarkerWithHue(
+            BitmapDescriptor.hueRed,
+          ), // 도착 위치 마커 아이콘 설정
+          infoWindow: InfoWindow(
+            title: "도착 위치",
+            snippet: widget.postData['destinationLocationText'], // 주소로 변환된 값
+          ),
+        ),
+      );
+    }
+  }
+
+  Future<void> _getCurrentLocation() async {
+    try {
+      final position = await Geolocator.getCurrentPosition(
+        desiredAccuracy: LocationAccuracy.high,
+      );
+
+      if (widget.currentUser != null) {
+        setState(() {
+          currentLocation.updateCurrentPosition(position);
+          // Google 지도의 초기 위치를 현재 위치로 설정
+          _mapController?.animateCamera(
+            CameraUpdate.newLatLng(
+              LatLng(position.latitude, position.longitude),
+            ),
+          );
+        });
+      }
+    } catch (e) {
+      print('위치 가져오기 오류: $e');
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    _getCurrentLocation(); // 위에서 작성한 함수를 initState에서 호출하여 현재 위치를 가져옵니다.
+  }
+
+  void _onMapCreated(GoogleMapController controller) {
+    setState(() {
+      _mapController = controller;
+      // Google 지도가 생성되면 마커를 추가
+      _addMarkers();
+    });
   }
 
   @override
@@ -172,7 +256,34 @@ class _PostDetailState extends State<PostDetail> {
                     ],
                   ),
                 ),
-              )
+              ),
+              Container(
+                height: 300, // 필요에 따라 조정
+                width: MediaQuery.of(context).size.width,
+                child: GoogleMap(
+                  mapType: MapType.normal,
+                  initialCameraPosition: CameraPosition(
+                    target: LatLng(
+                      currentLocation.currentPosition?.latitude ?? 0.0,
+                      currentLocation.currentPosition?.longitude ?? 0.0,
+                    ), // 초기 위치 (예시 위치)
+                    zoom: 15, // 초기 확대 수준
+                  ),
+                  // markers: {
+                  //   Marker(
+                  //     markerId: MarkerId('marker_id'),
+                  //     position: LatLng(
+                  //       currentLocation.currentPosition?.latitude ?? 0.0,
+                  //       currentLocation.currentPosition?.longitude ?? 0.0,
+                  //     ),
+                  //     infoWindow: InfoWindow(title: '현재위치'), // 마커 클릭하면 나타나는 글씨
+                  //   ),
+                  // },
+                  myLocationEnabled: true, // 현재 위치 버튼 활성화
+                  mapToolbarEnabled: true, // 지도 도구 모음 활성화
+                  onMapCreated: _onMapCreated,
+                ),
+              ),
             ],
           ),
         ),
