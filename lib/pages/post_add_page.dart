@@ -62,7 +62,8 @@ class _MyAddCrewState extends State<MyAddCrew> {
               crewDesc.isNotEmpty &&
               crewPeopleNum.isNotEmpty &&
               crewRegion.isNotEmpty &&
-              crewUrl.isNotEmpty) {
+              crewUrl.isNotEmpty &&
+              startLocationText.isNotEmpty) {
         String postKey = getRandomString(16);
 
         if (_image != null) {
@@ -88,6 +89,7 @@ class _MyAddCrewState extends State<MyAddCrew> {
           'num': crewPeopleNum,
           'region': crewRegion,
           'kakaoUrl': crewUrl,
+          'startLocationText': startLocationText, // 'startLocationText' 필드 추가
           'timestamp': FieldValue.serverTimestamp(),
         });
 
@@ -156,7 +158,7 @@ class _MyAddCrewState extends State<MyAddCrew> {
   LatLng? startLocation;
   LatLng? destinationLocation;
 
-  Future<String?> _getAddress(LatLng location) async {
+  Future<String>? _getAddress(LatLng location) async {
     final List<Placemark> placemarks =
         await placemarkFromCoordinates(location.latitude, location.longitude);
     if (placemarks.isEmpty) {
@@ -168,7 +170,8 @@ class _MyAddCrewState extends State<MyAddCrew> {
 
   Set<Marker> _markers = Set<Marker>();
 
-  void showLocationPickDialog({required bool isStartLocation}) async {
+  Future<void> showLocationPickDialog({required bool isStartLocation}) async {
+    LatLng? selectedLocation;
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -187,7 +190,7 @@ class _MyAddCrewState extends State<MyAddCrew> {
                       _mapController = controller;
                     });
                   },
-                  onTap: (location) {
+                  onTap: (location) async {
                     setState(() {
                       selectedLocation = location;
                       _markers.clear();
@@ -199,12 +202,12 @@ class _MyAddCrewState extends State<MyAddCrew> {
                       );
                     });
                   },
-                  markers: _markers, // 마커 표시
+                  markers: _markers,
                 ),
               ),
               actions: <Widget>[
                 TextButton(
-                  onPressed: () async {
+                  onPressed: () {
                     if (selectedLocation != null) {
                       if (isStartLocation) {
                         setState(() {
@@ -215,16 +218,6 @@ class _MyAddCrewState extends State<MyAddCrew> {
                           destinationLocation = selectedLocation;
                         });
                       }
-
-                      // 주소를 가져와 화면에 표시
-                      final String? address =
-                          await _getAddress(selectedLocation!);
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(
-                          content: Text('선택한 위치 주소: $address'),
-                        ),
-                      );
                     }
                     Navigator.of(context).pop();
                   },
@@ -236,8 +229,22 @@ class _MyAddCrewState extends State<MyAddCrew> {
         );
       },
     );
+    // 다이얼로그가 닫힌 후에 주소를 가져와 업데이트
+    if (selectedLocation != null) {
+      final String? address = await _getAddress(selectedLocation!);
+      if (address != null) {
+        if (mounted) {
+          setState(() {
+            startLocationText = "$address"; // 주소 업데이트
+            locationTextColor = Colors.black; // 색상 변경
+          });
+        }
+      }
+    }
   }
 
+  String startLocationText = "시작위치 찾기"; // 초기에는 "시작위치 찾기"로 설정
+  Color? locationTextColor = Colors.grey[500]; // 초기 텍스트 색상
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -449,14 +456,14 @@ class _MyAddCrewState extends State<MyAddCrew> {
                             color: Colors.grey[600],
                             size: 18,
                           ),
-                          Container(
-                            margin: const EdgeInsets.only(
-                                left: 130), // 아이콘과 텍스트 사이에 간격을 줍니다
-                            child: Text(
-                              "시작위치 찾기",
-                              style: TextStyle(
-                                color: Colors.grey[500],
-                                fontSize: 15,
+                          Expanded(
+                            child: Center(
+                              child: Text(
+                                startLocationText,
+                                style: TextStyle(
+                                  color: locationTextColor,
+                                  fontSize: 15,
+                                ),
                               ),
                             ),
                           ),
