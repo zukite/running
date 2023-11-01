@@ -30,6 +30,7 @@ class _PostDetailState extends State<PostDetail> {
   LatLng? destinationLocation;
   GoogleMapController? _mapController;
   final CurrentLocation currentLocation = CurrentLocation();
+  Set<Polyline> _polylines = {}; // Polyline을 저장하는 집합을 생성
 
   void deletePost() async {
     if (widget.currentUser != null &&
@@ -69,37 +70,50 @@ class _PostDetailState extends State<PostDetail> {
     _markers.clear(); // 마커를 초기화합니다.
 
     // 시작 위치 마커 추가
-    if (startLocation != null) {
-      _markers.add(
-        Marker(
-          markerId: MarkerId("시작위치"),
-          position: startLocation!,
-          icon: BitmapDescriptor.defaultMarkerWithHue(
-            BitmapDescriptor.hueGreen,
-          ), // 시작 위치 마커 아이콘 설정
-          infoWindow: InfoWindow(
-            title: "출발 위치",
-            snippet: widget.postData['startLocationText'], // 주소로 변환된 값
-          ),
-        ),
+    if (widget.postData['startLocation'] != null) {
+      final startLocationGeoPoint = widget.postData['startLocation'];
+      final startLocationLatLng = LatLng(
+        startLocationGeoPoint.latitude,
+        startLocationGeoPoint.longitude,
       );
+
+      print('Start Location: $startLocationLatLng'); // 시작 위치 출력
+
+      _markers.add(Marker(
+        markerId: MarkerId("시작위치"),
+        position: startLocationLatLng,
+        icon: BitmapDescriptor.defaultMarkerWithHue(
+          BitmapDescriptor.hueGreen,
+        ),
+        infoWindow: InfoWindow(
+          title: "출발 위치",
+          snippet: widget.postData['startLocationText'], // 주소로 변환된 값
+        ),
+      ));
     }
 
     // 도착 위치 마커 추가
-    if (destinationLocation != null) {
-      _markers.add(
-        Marker(
-          markerId: MarkerId("도착위치"),
-          position: destinationLocation!,
-          icon: BitmapDescriptor.defaultMarkerWithHue(
-            BitmapDescriptor.hueRed,
-          ), // 도착 위치 마커 아이콘 설정
-          infoWindow: InfoWindow(
-            title: "도착 위치",
-            snippet: widget.postData['destinationLocationText'], // 주소로 변환된 값
-          ),
-        ),
+    if (widget.postData['destinationLocation'] != null) {
+      final destinationLocationGeoPoint =
+          widget.postData['destinationLocation'];
+      final destinationLocationLatLng = LatLng(
+        destinationLocationGeoPoint.latitude,
+        destinationLocationGeoPoint.longitude,
       );
+
+      print('Destination Location: $destinationLocationLatLng'); // 도착 위치 출력
+
+      _markers.add(Marker(
+        markerId: MarkerId("도착위치"),
+        position: destinationLocationLatLng,
+        icon: BitmapDescriptor.defaultMarkerWithHue(
+          BitmapDescriptor.hueRed,
+        ),
+        infoWindow: InfoWindow(
+          title: "도착 위치",
+          snippet: widget.postData['destinationLocationText'], // 주소로 변환된 값
+        ),
+      ));
     }
   }
 
@@ -129,14 +143,59 @@ class _PostDetailState extends State<PostDetail> {
   void initState() {
     super.initState();
     _getCurrentLocation(); // 위에서 작성한 함수를 initState에서 호출하여 현재 위치를 가져옵니다.
+    _addMarkers(); // initState에서 _addMarkers 함수를 호출하여 마커를 추가
+    _addPolylines(); // 경로를 추가하기 위해 initState에서 _addPolylines 함수를 호출
   }
 
   void _onMapCreated(GoogleMapController controller) {
+    // setState(() {
+    //   _mapController = controller;
+    //   // Google 지도가 생성되면 마커를 추가
+    //   _addMarkers();
+
     setState(() {
       _mapController = controller;
-      // Google 지도가 생성되면 마커를 추가
-      _addMarkers();
+      // 초기 위치로 이동한 후 _addMarkers 함수를 호출하지 않습니다.
+      // _addMarkers 함수는 이미 initState에서 호출되었습니다.
+      if (widget.postData['startLocation'] != null) {
+        final startLocationGeoPoint = widget.postData['startLocation'];
+        final startLocationLatLng = LatLng(
+          startLocationGeoPoint.latitude,
+          startLocationGeoPoint.longitude,
+        );
+
+        _mapController?.animateCamera(
+          CameraUpdate.newLatLng(startLocationLatLng),
+        );
+      }
     });
+  }
+
+  // _addPolylines 함수를 추가
+  void _addPolylines() {
+    if (widget.postData['startLocation'] != null &&
+        widget.postData['destinationLocation'] != null) {
+      final startLocationGeoPoint = widget.postData['startLocation'];
+      final startLocationLatLng = LatLng(
+        startLocationGeoPoint.latitude,
+        startLocationGeoPoint.longitude,
+      );
+
+      final destinationLocationGeoPoint =
+          widget.postData['destinationLocation'];
+      final destinationLocationLatLng = LatLng(
+        destinationLocationGeoPoint.latitude,
+        destinationLocationGeoPoint.longitude,
+      );
+
+      // Polyline 생성
+      _polylines.add(Polyline(
+        polylineId: PolylineId("crew_route"),
+        color: Colors.blue, // 경로 색상
+        width: 5, // 경로 너비
+        points: [startLocationLatLng, destinationLocationLatLng],
+      ));
+    }
   }
 
   @override
@@ -267,7 +326,7 @@ class _PostDetailState extends State<PostDetail> {
                       currentLocation.currentPosition?.latitude ?? 0.0,
                       currentLocation.currentPosition?.longitude ?? 0.0,
                     ), // 초기 위치 (예시 위치)
-                    zoom: 15, // 초기 확대 수준
+                    zoom: 16, // 초기 확대 수준
                   ),
                   // markers: {
                   //   Marker(
@@ -279,6 +338,8 @@ class _PostDetailState extends State<PostDetail> {
                   //     infoWindow: InfoWindow(title: '현재위치'), // 마커 클릭하면 나타나는 글씨
                   //   ),
                   // },
+                  markers: _markers, // 마커를 표시하기 위해 _markers 사용
+                  polylines: _polylines, // Polyline을 추가
                   myLocationEnabled: true, // 현재 위치 버튼 활성화
                   mapToolbarEnabled: true, // 지도 도구 모음 활성화
                   onMapCreated: _onMapCreated,
