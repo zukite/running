@@ -288,11 +288,7 @@ class _MyProfileModifyState extends State<MyProfileModify> {
         actions: [
           IconButton(
             onPressed: () {
-              Navigator.of(context).pushReplacement(
-                MaterialPageRoute(
-                  builder: (context) => const MyProfilePage(),
-                ),
-              );
+              Navigator.pop(context); // 현재 페이지를 닫음
             },
             icon: const Icon(Icons.save_alt),
           ),

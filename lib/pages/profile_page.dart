@@ -36,10 +36,6 @@ class _MyProfilePageState extends State<MyProfilePage> {
         elevation: 0.0,
         actions: [
           IconButton(
-            onPressed: () {},
-            icon: const Icon(Icons.notifications),
-          ),
-          IconButton(
             onPressed: () {
               Navigator.of(context).push(
                 MaterialPageRoute(

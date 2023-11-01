@@ -41,6 +41,8 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
+  void communityPage() {}
+
   void qnaPage() {
     // pop menu drawer
     Navigator.pop(context);
@@ -127,6 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
       drawer: MyDrawer(
         onProfileTap: goToProfilePage,
         onSignOut: signOut,
+        onCommunity: communityPage,
         onQnA: qnaPage,
       ),
       body: Column(

@@ -250,9 +250,70 @@ class _MyAddCrewState extends State<MyAddCrew> {
     }
   }
 
-  String startLocationText = "시작위치 찾기"; // 초기에는 "시작위치 찾기"로 설정
-  String destinationLocationText = "도착위치 찾기";
+  String startLocationText = "출발위치"; // 초기에는 "시작위치 찾기"로 설정
+  String destinationLocationText = "도착위치";
   Color? locationTextColor = Colors.grey[500]; // 초기 텍스트 색상
+
+  List<String> regionList = [
+    '강남구',
+    '강동구',
+    '강북구',
+    '강서구',
+    '관악구',
+    '광진구',
+    '구로구',
+    '금천구',
+    '노원구',
+    '도봉구',
+    '동대문구',
+    '동작구',
+    '마포구',
+    '서대문구',
+    '서초구',
+    '성동구',
+    '성북구',
+    '송파구',
+    '양천구',
+    '영등포구',
+    '용산구',
+    '은평구',
+    '종로구',
+    '중구',
+    '중랑구',
+  ];
+
+  void regionEditField(String field) async {
+    final selectedRegion = await showModalBottomSheet<String>(
+      context: context,
+      builder: (context) {
+        return StatefulBuilder(
+          builder: (BuildContext context, StateSetter setState) {
+            return ListView(
+              children: regionList.map((region) {
+                return ListTile(
+                  title: Text(region),
+                  onTap: () {
+                    setState(() {
+                      crewRegion = region;
+                    });
+                    Navigator.pop(context, region);
+                  },
+                );
+              }).toList(),
+            );
+          },
+        );
+      },
+    );
+
+    // 선택한 지역을 `crewRegion` 변수에 저장한 후 화면 다시 그리도록 업데이트
+    if (selectedRegion != null) {
+      setState(() {
+        crewRegion = selectedRegion;
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -408,33 +469,46 @@ class _MyAddCrewState extends State<MyAddCrew> {
                 ),
               ),
               const SizedBox(height: 8),
-              Container(
-                margin: const EdgeInsets.symmetric(horizontal: 16),
-                child: TextField(
-                  controller: crewRegionController,
-                  decoration: InputDecoration(
-                    enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.blue),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.blue),
-                      borderRadius: BorderRadius.circular(10),
-                    ),
-                    fillColor: Colors.grey[300],
-                    filled: true,
-                    prefixIcon: const Icon(Icons.room),
-                    hintText: "동/읍/면 찾기",
-                    hintStyle: TextStyle(
-                      color: Colors.grey[500],
-                    ),
-                    isDense: true,
-                    contentPadding: const EdgeInsets.all(10),
+              GestureDetector(
+                onTap: () {
+                  regionEditField(crewRegion);
+                },
+                child: Container(
+                  margin: const EdgeInsets.symmetric(horizontal: 16),
+                  decoration: BoxDecoration(
+                    color: Colors.grey[300],
+                    borderRadius: BorderRadius.circular(10),
+                    border: Border.all(color: Colors.blue),
                   ),
-                  textAlign: TextAlign.center,
-                  onChanged: (value) {
-                    crewRegion = value;
-                  },
+                  child: Padding(
+                    padding: const EdgeInsets.all(10.0),
+                    child: Center(
+                      child: Row(
+                        mainAxisAlignment: MainAxisAlignment.start,
+                        children: [
+                          SizedBox(width: 5),
+                          Icon(
+                            Icons.room,
+                            color: Colors.grey[600],
+                            size: 18,
+                          ),
+                          Expanded(
+                            child: Center(
+                              child: Text(
+                                crewRegion.isNotEmpty ? crewRegion : "지역구 선택",
+                                style: TextStyle(
+                                  color: crewRegion.isNotEmpty
+                                      ? Colors.black
+                                      : Colors.grey[500], // 검은색 또는 회색 설정
+                                  fontSize: 15,
+                                ),
+                              ),
+                            ),
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
                 ),
               ),
               const SizedBox(height: 8),
