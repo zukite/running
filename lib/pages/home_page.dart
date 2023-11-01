@@ -19,7 +19,7 @@ class MyHomePage extends StatefulWidget {
 
 class _MyHomePageState extends State<MyHomePage> {
   final currentUser = FirebaseAuth.instance.currentUser!;
-  bool isClick = true; // 클릭했을 때 색상 변경위한 변수
+  bool isClick = true;
   GoogleMapController? _mapController;
 
   final CurrentLocation currentLocation = CurrentLocation();
@@ -29,10 +29,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void goToProfilePage() {
-    // pop menu drawer
     Navigator.pop(context);
-
-    // go to profile page
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -44,10 +41,7 @@ class _MyHomePageState extends State<MyHomePage> {
   void communityPage() {}
 
   void qnaPage() {
-    // pop menu drawer
     Navigator.pop(context);
-
-    // go to profile page
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -57,10 +51,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   void goToAddCrewPage() {
-    // pop menu drawer
     Navigator.pop(context);
-
-    // go to profile page
     Navigator.push(
       context,
       MaterialPageRoute(
@@ -76,7 +67,7 @@ class _MyHomePageState extends State<MyHomePage> {
   }
 
   Future<void> _getCurrentLocation() async {
-    await currentLocation.getCurrentLocation(); // CurrentLocation 클래스로 위치 설정 호출
+    await currentLocation.getCurrentLocation();
   }
 
   @override
@@ -194,41 +185,46 @@ class _MyHomePageState extends State<MyHomePage> {
           ),
           if (isClick)
             const Expanded(
-              child: MyPostList(), // 모집 중인 크루를 선택한 경우 MyPostList 표시
+              child: MyPostList(),
             ),
           if (!isClick)
             Expanded(
-              child: GoogleMap(
-                mapType: MapType.normal, // 지도 유형 설정
-                initialCameraPosition: CameraPosition(
-                  target: LatLng(
-                    currentLocation.currentPosition?.latitude ?? 0.0,
-                    currentLocation.currentPosition?.longitude ?? 0.0,
-                  ),
-                  zoom: 15.0, // 초기 줌 레벨
-                ),
-                markers: {
-                  Marker(
-                    markerId: MarkerId('marker_id'),
-                    position: LatLng(
-                      currentLocation.currentPosition?.latitude ?? 0.0,
-                      currentLocation.currentPosition?.longitude ?? 0.0,
-                    ),
-                    infoWindow: InfoWindow(title: '현재위치'), // 마커 클릭하면 나타나는 글씨
-                  ),
-                },
-                myLocationEnabled: true, // 현재 위치 버튼 활성화
-                mapToolbarEnabled: true, // 지도 도구 모음 활성화
-                onMapCreated: (controller) {
-                  _mapController = controller;
+              child: FutureBuilder(
+                future: _loadPosts(),
+                builder: (context, snapshot) {
+                  if (snapshot.connectionState == ConnectionState.waiting) {
+                    return Center(
+                      child: CircularProgressIndicator(),
+                    );
+                  } else if (snapshot.hasError) {
+                    return Center(
+                      child: Text('Error: ${snapshot.error}'),
+                    );
+                  } else {
+                    final posts = snapshot.data as List<Post>;
+                    return GoogleMap(
+                      mapType: MapType.normal,
+                      initialCameraPosition: CameraPosition(
+                        target: LatLng(
+                          currentLocation.currentPosition?.latitude ?? 0.0,
+                          currentLocation.currentPosition?.longitude ?? 0.0,
+                        ),
+                        zoom: 15.0,
+                      ),
+                      markers: _createMarkers(posts),
+                      myLocationEnabled: true,
+                      mapToolbarEnabled: true,
+                      onMapCreated: (controller) {
+                        _mapController = controller;
+                      },
+                    );
+                  }
                 },
               ),
             ),
         ],
       ),
-
-      // 게시글 추가 버튼
-      floatingActionButton: isClick // isClick 변수가 true (모집 중인 크루 선택)일 때만 버튼 표시
+      floatingActionButton: isClick
           ? FloatingActionButton(
               onPressed: () {
                 Navigator.of(context).push(
@@ -238,7 +234,40 @@ class _MyHomePageState extends State<MyHomePage> {
               elevation: 0.0,
               child: const Icon(Icons.add),
             )
-          : null, // 아닌 경우 null을 반환하여 버튼을 숨김
+          : null,
     );
   }
+
+  Future<List<Post>> _loadPosts() async {
+    // Firestore에서 게시글 데이터 가져오는 코드
+    final querySnapshot =
+        await FirebaseFirestore.instance.collection('Posts').get();
+    final posts = querySnapshot.docs.map((doc) {
+      final data = doc.data() as Map<String, dynamic>;
+      return Post(
+        startLocation: data['startLocation'],
+        startLocationText: data['crewName'],
+      );
+    }).toList();
+    return posts;
+  }
+
+  Set<Marker> _createMarkers(List<Post> posts) {
+    return posts.map((post) {
+      return Marker(
+        markerId: MarkerId(post.startLocationText),
+        position:
+            LatLng(post.startLocation.latitude, post.startLocation.longitude),
+        infoWindow: InfoWindow(title: post.startLocationText),
+      );
+    }).toSet();
+  }
+}
+
+class Post {
+  // 시작위치와 시작 텍스트를 저장
+  final GeoPoint startLocation;
+  final String startLocationText;
+
+  Post({required this.startLocation, required this.startLocationText});
 }
