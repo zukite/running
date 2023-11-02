@@ -8,6 +8,7 @@ import 'package:running/pages/post_add_page.dart';
 import 'package:running/pages/post_search_page.dart';
 import 'package:running/pages/profile_page.dart';
 import 'package:running/pages/qna_page.dart';
+import 'package:running/pages/record_page.dart';
 import 'package:running/utils/current_location.dart';
 
 class MyHomePage extends StatefulWidget {
@@ -38,7 +39,15 @@ class _MyHomePageState extends State<MyHomePage> {
     );
   }
 
-  void communityPage() {}
+  void recordPage() {
+    Navigator.pop(context);
+    Navigator.push(
+      context,
+      MaterialPageRoute(
+        builder: (context) => const RecordPage(),
+      ),
+    );
+  }
 
   void qnaPage() {
     Navigator.pop(context);
@@ -120,7 +129,7 @@ class _MyHomePageState extends State<MyHomePage> {
       drawer: MyDrawer(
         onProfileTap: goToProfilePage,
         onSignOut: signOut,
-        onCommunity: communityPage,
+        onRecord: recordPage,
         onQnA: qnaPage,
       ),
       body: Column(

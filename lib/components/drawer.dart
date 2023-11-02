@@ -4,13 +4,13 @@ import 'package:running/components/my_list_tile.dart';
 class MyDrawer extends StatelessWidget {
   final void Function()? onProfileTap;
   final void Function()? onSignOut;
-  final void Function()? onCommunity;
+  final void Function()? onRecord;
   final void Function()? onQnA;
   const MyDrawer({
     super.key,
     required this.onProfileTap,
     required this.onSignOut,
-    required this.onCommunity,
+    required this.onRecord,
     required this.onQnA,
   });
 
@@ -44,13 +44,13 @@ class MyDrawer extends StatelessWidget {
                 onTap: onProfileTap,
               ),
               MyListTile(
-                icon: Icons.question_answer,
-                text: "C O M M U N I T Y",
-                onTap: onCommunity,
+                icon: Icons.description,
+                text: "R E C O R D",
+                onTap: onRecord,
               ),
               //qna list tile
               MyListTile(
-                icon: Icons.help,
+                icon: Icons.question_answer,
                 text: "Q & A",
                 onTap: onQnA,
               ),
