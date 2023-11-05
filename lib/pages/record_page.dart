@@ -40,6 +40,7 @@ class _RecordPageState extends State<RecordPage> {
           children: [
             Container(
               height: 500,
+              // 네이버 지도로 바꿔야 할 듯
               child: GoogleMap(
                 onMapCreated: (controller) {
                   mapController = controller;
