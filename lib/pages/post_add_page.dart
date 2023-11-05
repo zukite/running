@@ -79,6 +79,13 @@ class _MyAddCrewState extends State<MyAddCrew> {
             crewimageUrl = downloadUrl;
           }
         }
+
+        // 주소를 위도와 경도로 변환
+        GeoPoint? startLocationPoint =
+            await _getGeoPointFromAddress(startLocationText);
+        GeoPoint? destinationLocationPoint =
+            await _getGeoPointFromAddress(destinationLocationText);
+
         final userInfo = await getUserInfo(currentUser!.uid); // 사용자 정보 가져오기
         await FirebaseFirestore.instance.collection('Posts').doc(postKey).set({
           'key': postKey,
@@ -92,6 +99,8 @@ class _MyAddCrewState extends State<MyAddCrew> {
           'kakaoUrl': crewUrl,
           'startLocationText': startLocationText, // 'startLocationText' 필드 추가
           'destinationLocationText': destinationLocationText,
+          'startLocation': startLocationPoint, // 변환된 위도와 경도 저장
+          'destinationLocation': destinationLocationPoint,
           'timestamp': FieldValue.serverTimestamp(),
         });
 
@@ -130,6 +139,18 @@ class _MyAddCrewState extends State<MyAddCrew> {
         selectedImage = false;
       });
     }
+  }
+
+  Future<GeoPoint?> _getGeoPointFromAddress(String address) async {
+    try {
+      List<Location> locations = await locationFromAddress(address);
+      if (locations.isNotEmpty) {
+        return GeoPoint(locations.first.latitude, locations.first.longitude);
+      }
+    } catch (e) {
+      print("주소에서 위치로 변환 중 오류 발생: $e");
+    }
+    return null;
   }
 
   Uint8List? _image;
