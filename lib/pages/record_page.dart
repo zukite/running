@@ -1,5 +1,4 @@
 import 'dart:async';
-
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
@@ -59,8 +58,8 @@ class _RecordPageState extends State<RecordPage> {
     started = true;
     timer = Timer.periodic(Duration(seconds: 1), (timer) {
       int localSeconds = seconds + 1;
-      int localMinutes = minutes + 1;
-      int localHours = hours + 1;
+      int localMinutes = minutes;
+      int localHours = hours;
 
       if (localSeconds > 59) {
         if (localMinutes > 59) {
