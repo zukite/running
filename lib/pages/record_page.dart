@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
@@ -18,9 +20,45 @@ class _RecordPageState extends State<RecordPage> {
 
   String startLocationText = "출발위치";
   String destinationLocationText = "도착위치";
+  bool isTimerRunning = false; // 타이머 실행 여부
+  int elapsedTimeInSeconds = 0; // 경과 시간 (초)
+  late Stopwatch stopwatch;
 
   // Directions API 키
   final String apiKey = 'AIzaSyAGDQo5OmDqTQHEXLELWl2Oufi5onik1hs';
+
+  @override
+  void initState() {
+    super.initState();
+    stopwatch = Stopwatch()..start(); // stopwatch 초기화
+  }
+
+  void startTimer() {
+    if (!stopwatch.isRunning) {
+      stopwatch.start();
+      Timer.periodic(Duration(seconds: 1), (Timer timer) {
+        if (stopwatch.isRunning) {
+          setState(() {
+            elapsedTimeInSeconds = stopwatch.elapsed.inSeconds;
+          });
+        } else {
+          timer.cancel();
+        }
+      });
+      setState(() {
+        isTimerRunning = true;
+      });
+    }
+  }
+
+  void stopTimer() {
+    if (stopwatch.isRunning) {
+      stopwatch.stop();
+      setState(() {
+        isTimerRunning = false;
+      });
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -167,6 +205,29 @@ class _RecordPageState extends State<RecordPage> {
                   ),
                 ),
               ),
+            ),
+            // 타이머 및 버튼
+            Text(
+              '경과 시간: $elapsedTimeInSeconds 초',
+              style: TextStyle(fontSize: 20),
+            ),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                ElevatedButton(
+                  onPressed: isTimerRunning ? stopTimer : startTimer,
+                  child: Text(isTimerRunning ? '멈춤' : '시작'),
+                ),
+                ElevatedButton(
+                  onPressed: () {
+                    if (isTimerRunning) {
+                      stopTimer();
+                    }
+                    // 도착 버튼을 누를 때 수행해야하는 작업 추가
+                  },
+                  child: Text('도착'),
+                ),
+              ],
             ),
           ],
         ),

@@ -28,6 +28,7 @@ class _AddQnaState extends State<AddQna> {
       length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
   void postQnA() async {
+    print("postQnA function called"); // 이 줄 추가
     showDialog(
       context: context,
       builder: (context) => const Center(
@@ -35,12 +36,12 @@ class _AddQnaState extends State<AddQna> {
       ),
     );
     try {
-      qtitle = titleController.text; // 제목을 컨트롤러로부터 가져옴
-      qdesc = contentController.text; // 내용을 컨트롤러로부터 가져옴
+      qtitle = titleController.text;
+      qdesc = contentController.text;
 
       if (qtitle.isNotEmpty && qdesc.isNotEmpty) {
         String postKey = getRandomString(16);
-        final userInfo = await getUserInfo(currentUser!.uid); // 사용자 정보 가져오기
+        final userInfo = await getUserInfo(currentUser!.uid);
 
         await FirebaseFirestore.instance
             .collection('QnAPosts')
@@ -53,8 +54,8 @@ class _AddQnaState extends State<AddQna> {
           'authorName': userInfo['username'],
           'timestamp': FieldValue.serverTimestamp(),
         });
-        // 성공적으로 크루를 만들었을 때 다이얼로그 닫기
-        Navigator.of(context).pop();
+
+        Navigator.of(context).pop(); // 현재 페이지를 닫음
 
         Navigator.pushReplacement(
           context,
@@ -63,10 +64,7 @@ class _AddQnaState extends State<AddQna> {
           ),
         );
       } else {
-        // 필수 필드가 비어 있음을 사용자에게 알릴 수 있도록 메시지 표시
-        // 다이얼로그 닫기
         Navigator.of(context).pop();
-
         ScaffoldMessenger.of(context).showSnackBar(
           const SnackBar(
             content: Text("필수 필드를 모두 입력하세요."),
@@ -74,7 +72,6 @@ class _AddQnaState extends State<AddQna> {
         );
       }
     } on FirebaseAuthException catch (e) {
-      // pop loading circle
       Navigator.of(context).pop();
       ScaffoldMessenger.of(context).showSnackBar(
         SnackBar(
