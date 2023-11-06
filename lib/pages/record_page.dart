@@ -20,45 +20,70 @@ class _RecordPageState extends State<RecordPage> {
 
   String startLocationText = "출발위치";
   String destinationLocationText = "도착위치";
-  bool isTimerRunning = false; // 타이머 실행 여부
-  int elapsedTimeInSeconds = 0; // 경과 시간 (초)
-  late Stopwatch stopwatch;
+  int seconds = 0, minutes = 0, hours = 0;
+  String digitSeconds = "00", digitMinutes = "00", digitHours = "00";
+  Timer? timer;
+  bool started = false;
+  List laps = [];
+
+  void stop() {
+    timer!.cancel();
+    setState(() {
+      started = false;
+    });
+  }
+
+  void reset() {
+    timer!.cancel();
+    setState(() {
+      seconds = 0;
+      minutes = 0;
+      hours = 0;
+
+      digitSeconds = "00";
+      digitMinutes = "00";
+      digitHours = "00";
+
+      started = false;
+    });
+  }
+
+  void addLaps() {
+    String lap = "$digitHours:$digitMinutes:$digitSeconds";
+    setState(() {
+      laps.add(lap);
+    });
+  }
+
+  void start() {
+    started = true;
+    timer = Timer.periodic(Duration(seconds: 1), (timer) {
+      int localSeconds = seconds + 1;
+      int localMinutes = minutes + 1;
+      int localHours = hours + 1;
+
+      if (localSeconds > 59) {
+        if (localMinutes > 59) {
+          localHours++;
+          localMinutes = 0;
+        } else {
+          localMinutes++;
+          localSeconds = 0;
+        }
+      }
+      setState(() {
+        seconds = localSeconds;
+        minutes = localMinutes;
+        hours = localHours;
+        digitSeconds = (seconds >= 10) ? "$seconds" : "0$seconds";
+        digitHours = (hours >= 10) ? "$hours" : "0$hours";
+        digitMinutes = (minutes >= 10) ? "$minutes" : "0$minutes";
+      });
+    });
+  }
 
   // Directions API 키
   final String apiKey = 'AIzaSyAGDQo5OmDqTQHEXLELWl2Oufi5onik1hs';
-
-  @override
-  void initState() {
-    super.initState();
-    stopwatch = Stopwatch()..start(); // stopwatch 초기화
-  }
-
-  void startTimer() {
-    if (!stopwatch.isRunning) {
-      stopwatch.start();
-      Timer.periodic(Duration(seconds: 1), (Timer timer) {
-        if (stopwatch.isRunning) {
-          setState(() {
-            elapsedTimeInSeconds = stopwatch.elapsed.inSeconds;
-          });
-        } else {
-          timer.cancel();
-        }
-      });
-      setState(() {
-        isTimerRunning = true;
-      });
-    }
-  }
-
-  void stopTimer() {
-    if (stopwatch.isRunning) {
-      stopwatch.stop();
-      setState(() {
-        isTimerRunning = false;
-      });
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
@@ -206,26 +231,59 @@ class _RecordPageState extends State<RecordPage> {
                 ),
               ),
             ),
-            // 타이머 및 버튼
-            Text(
-              '경과 시간: $elapsedTimeInSeconds 초',
-              style: TextStyle(fontSize: 20),
+            SizedBox(
+              height: 30,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
-                  onPressed: isTimerRunning ? stopTimer : startTimer,
-                  child: Text(isTimerRunning ? '멈춤' : '시작'),
+                  onPressed: () {
+                    (!started) ? start() : stop();
+                  },
+                  child: Text(
+                    (!started) ? '출발' : "도착",
+                    style: TextStyle(
+                      color: Colors.grey[850],
+                      fontSize: 20,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0), // 반지름 설정
+                    ),
+                    backgroundColor: Colors.grey[50], // 배경색 설정
+                    side: BorderSide(color: Colors.blue),
+                    elevation: 0, // 테두리색과 두께 설정
+                  ),
+                ),
+                Text(
+                  "$digitHours:$digitMinutes:$digitSeconds",
+                  style: TextStyle(
+                    color: Colors.grey[850],
+                    fontSize: 50,
+                    fontWeight: FontWeight.w400,
+                  ),
                 ),
                 ElevatedButton(
                   onPressed: () {
-                    if (isTimerRunning) {
-                      stopTimer();
-                    }
-                    // 도착 버튼을 누를 때 수행해야하는 작업 추가
+                    reset();
                   },
-                  child: Text('도착'),
+                  child: Text(
+                    '리셋',
+                    style: TextStyle(
+                      color: Colors.grey[850],
+                      fontSize: 20,
+                    ),
+                  ),
+                  style: ElevatedButton.styleFrom(
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(20.0), // 반지름 설정
+                    ),
+                    backgroundColor: Colors.grey[50], // 배경색 설정
+                    side: BorderSide(color: Colors.blue),
+                    elevation: 0, // 테두리색과 두께 설정
+                  ),
                 ),
               ],
             ),
