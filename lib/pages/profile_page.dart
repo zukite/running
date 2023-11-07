@@ -3,6 +3,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:running/components/profile_list.dart';
+import 'package:running/components/record_list.dart';
 import 'package:running/pages/profile_modify.dart';
 
 class MyProfilePage extends StatefulWidget {
@@ -173,6 +174,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                     MyProfilePostList(
                         currentUser:
                             currentUser), // 개설 크루를 선택한 경 우 MyProfilePostList 표시
+                  if (isJoinClick) MyRecordList(currentUser: currentUser),
                 ],
               ),
             );

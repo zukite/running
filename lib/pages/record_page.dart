@@ -1,4 +1,7 @@
 import 'dart:async';
+import 'dart:math';
+import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
@@ -83,6 +86,41 @@ class _RecordPageState extends State<RecordPage> {
 
   // Directions API 키
   final String apiKey = 'AIzaSyAGDQo5OmDqTQHEXLELWl2Oufi5onik1hs';
+
+  final currentUser = FirebaseAuth.instance.currentUser;
+  FirebaseFirestore firestore = FirebaseFirestore.instance;
+  final String _chars =
+      'AaBbCcDdEeFfGgHhIiJjKkLlMmNnOoPpQqRrSsTtUuVvWwXxYyZz1234567890';
+  final Random _rnd = Random();
+
+  String getRandomString(int length) => String.fromCharCodes(Iterable.generate(
+      length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
+
+  void saveRecordTime() async {
+    String postKey = getRandomString(16);
+    // 시간을 시, 분, 초의 형식으로 합쳐서 문자열을 만듭니다.
+    String recordTime = '$digitHours:$digitMinutes:$digitSeconds';
+
+    try {
+      await FirebaseFirestore.instance
+          .collection('RecordTime')
+          .doc(postKey)
+          .set({
+        'authorUid': currentUser?.uid, // 작성자의 UID를 저장
+        'recordTime': recordTime,
+        'timestamp': FieldValue.serverTimestamp(),
+      });
+      Navigator.of(context).pop();
+    } on FirebaseAuthException catch (e) {
+      // pop loading circle
+      Navigator.of(context).pop();
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(
+          content: Text("오류 : ${e.code}"),
+        ),
+      );
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -244,14 +282,60 @@ class _RecordPageState extends State<RecordPage> {
               ),
             ),
             SizedBox(
-              height: 30,
+              height: 15,
             ),
             Row(
               mainAxisAlignment: MainAxisAlignment.spaceEvenly,
               children: [
                 ElevatedButton(
                   onPressed: () {
-                    (!started) ? start() : stop();
+                    if (!started) {
+                      start();
+                    } else {
+                      stop();
+                      // 팝업 표시
+                      showDialog(
+                        context: context,
+                        builder: (context) {
+                          return AlertDialog(
+                            title: Center(child: Text('시간 기록')),
+                            content: Container(
+                              width: 200, // 원하는 폭으로 설정
+                              height: 150, // 원하는 높이로 설정
+                              child: Center(
+                                child: Text(
+                                  '$digitHours:$digitMinutes:$digitSeconds',
+                                  style: TextStyle(
+                                    fontSize: 40,
+                                    fontWeight: FontWeight.bold,
+                                  ),
+                                ),
+                              ),
+                            ),
+                            contentPadding:
+                                EdgeInsets.all(10.0), // 팝업 내용의 패딩 조절
+                            actions: [
+                              TextButton(
+                                onPressed: saveRecordTime,
+                                child: Text(
+                                  '저장',
+                                  style: TextStyle(color: Colors.grey[850]),
+                                ),
+                              ),
+                              TextButton(
+                                onPressed: () {
+                                  Navigator.of(context).pop(); // 팝업 닫기
+                                },
+                                child: Text(
+                                  '닫기',
+                                  style: TextStyle(color: Colors.grey[850]),
+                                ),
+                              ),
+                            ],
+                          );
+                        },
+                      );
+                    }
                   },
                   child: Text(
                     (!started) ? '출발' : "도착",
