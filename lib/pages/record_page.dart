@@ -95,6 +95,20 @@ class _RecordPageState extends State<RecordPage> {
           style: TextStyle(color: Colors.grey[850]),
         ),
         elevation: 0.0,
+        actions: [
+          IconButton(
+            onPressed: () {
+              setState(() {
+                // 출발 위치와 도착 위치 초기화
+                startLocationText = "출발위치";
+                destinationLocationText = "도착위치";
+                markers.clear();
+                polylines.clear();
+              });
+            },
+            icon: const Icon(Icons.refresh),
+          )
+        ],
       ),
       body: Padding(
         padding: const EdgeInsets.symmetric(horizontal: 15),
@@ -102,7 +116,6 @@ class _RecordPageState extends State<RecordPage> {
           children: [
             Container(
               height: 500,
-              // 네이버 지도로 바꿔야 할 듯
               child: GoogleMap(
                 onMapCreated: (controller) {
                   mapController = controller;
