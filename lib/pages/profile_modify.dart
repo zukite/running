@@ -80,23 +80,25 @@ class _MyProfileModifyState extends State<MyProfileModify> {
 
   Future<void> selectImage() async {
     Uint8List img = await pickImage(ImageSource.gallery);
-    setState(() {
-      _image = img;
-      selectedImage = true; // 이미지가 선택되었음을 표시
-    });
-    if (_image != null) {
-      // Firebase Storage에 이미지 업로드
-      String imagePath = "profile_images/${currentUser.uid}.jpg";
-      Reference ref = _storage.ref().child(imagePath);
-      UploadTask uploadTask = ref.putData(_image!);
+    if (img != null) {
+      setState(() {
+        _image = img;
+        selectedImage = true; // 이미지가 선택되었음을 표시
+      });
+      if (_image != null) {
+        // Firebase Storage에 이미지 업로드
+        String imagePath = "profile_images/${currentUser.uid}.jpg";
+        Reference ref = _storage.ref().child(imagePath);
+        UploadTask uploadTask = ref.putData(_image!); // "!"를 사용하여 null 체크 생략
 
-      TaskSnapshot snapshot = await uploadTask;
-      if (snapshot.state == TaskState.success) {
-        // 이미지 업로드 성공 시 Firestore에 이미지 다운로드 URL 저장
-        String downloadUrl = await ref.getDownloadURL();
-        await userCollection
-            .doc(currentUser.email)
-            .update({"userImage": downloadUrl});
+        TaskSnapshot snapshot = await uploadTask;
+        if (snapshot.state == TaskState.success) {
+          // 이미지 업로드 성공 시 Firestore에 이미지 다운로드 URL 저장
+          String downloadUrl = await ref.getDownloadURL();
+          await userCollection
+              .doc(currentUser.email)
+              .update({"userImage": downloadUrl});
+        }
       }
     }
   }
