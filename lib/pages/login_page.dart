@@ -36,7 +36,7 @@ class _LoginPageState extends State<LoginPage> {
       );
 
       // 로딩 원 종료
-      if (context != null) {
+      if (mounted) {
         Navigator.pop(context);
       }
 
@@ -85,13 +85,13 @@ class _LoginPageState extends State<LoginPage> {
 
                   // 앱 이름
                   const Text(
-                    "RUNNING",
+                    "같이 뛸래?",
                     style: TextStyle(fontSize: 30),
                   ),
-                  const Text(
-                    "CREW",
-                    style: TextStyle(fontSize: 30),
-                  ),
+                  // const Text(
+                  //   "CREW",
+                  //   style: TextStyle(fontSize: 30),
+                  // ),
                   const SizedBox(height: 25),
                   MyTextField(
                     controller: emailTextController,

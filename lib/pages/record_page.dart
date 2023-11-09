@@ -7,6 +7,7 @@ import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:geocoding/geocoding.dart';
 import 'package:http/http.dart' as http;
 import 'dart:convert';
+import 'package:geolocator/geolocator.dart'; // Geolocator 패키지 추가
 
 class RecordPage extends StatefulWidget {
   const RecordPage({Key? key}) : super(key: key);
@@ -27,6 +28,19 @@ class _RecordPageState extends State<RecordPage> {
   Timer? timer;
   bool started = false;
   List laps = [];
+
+  // 앱이 시작될 때 초기 위치를 현재 위치로 설정
+  void setInitialCameraPosition() async {
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
+    mapController?.animateCamera(
+      CameraUpdate.newLatLng(
+        LatLng(position.latitude, position.longitude),
+      ),
+    );
+  }
 
   void stop() {
     timer!.cancel();
@@ -85,7 +99,7 @@ class _RecordPageState extends State<RecordPage> {
   }
 
   // Directions API 키
-  final String apiKey = 'AIzaSyAGDQo5OmDqTQHEXLELWl2Oufi5onik1hs';
+  final String apiKey = 'YOUR_API_KEY_HERE'; // Directions API 키를 채워 넣으세요
 
   final currentUser = FirebaseAuth.instance.currentUser;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -123,6 +137,12 @@ class _RecordPageState extends State<RecordPage> {
   }
 
   @override
+  void initState() {
+    super.initState();
+    setInitialCameraPosition(); // 앱이 시작될 때 초기 위치를 현재 위치로 설정
+  }
+
+  @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
@@ -153,49 +173,18 @@ class _RecordPageState extends State<RecordPage> {
         child: Column(
           children: [
             Container(
-              height: 500,
+              height: MediaQuery.of(context).size.height / 2,
               child: GoogleMap(
                 onMapCreated: (controller) {
                   mapController = controller;
                 },
                 initialCameraPosition: CameraPosition(
-                  target: LatLng(37.7749, -122.4194),
+                  target: LatLng(37.7749, -122.4194), // 초기 위치를 설정해도 됨
                   zoom: 15.0,
                 ),
+                myLocationEnabled: true, // 이 부분을 추가
                 onTap: (LatLng location) async {
-                  List<Placemark> placemarks = await placemarkFromCoordinates(
-                      location.latitude, location.longitude);
-                  if (placemarks.isNotEmpty) {
-                    Placemark placemark = placemarks[0];
-                    String address = placemark.street ?? "";
-                    setState(() {
-                      if (startLocationText == "출발위치") {
-                        startLocationText = "$address";
-                        markers.add(
-                          Marker(
-                            markerId: MarkerId('start'),
-                            position: location,
-                            infoWindow: InfoWindow(title: '출발 위치'),
-                            icon: BitmapDescriptor.defaultMarkerWithHue(
-                                BitmapDescriptor.hueGreen),
-                          ),
-                        );
-                      } else {
-                        destinationLocationText = "$address";
-                        markers.add(
-                          Marker(
-                            markerId: MarkerId('destination'),
-                            position: location,
-                            infoWindow: InfoWindow(title: '도착 위치'),
-                            icon: BitmapDescriptor.defaultMarkerWithHue(
-                                BitmapDescriptor.hueRed),
-                          ),
-                        );
-                        // 경로 그리기
-                        _drawRoute();
-                      }
-                    });
-                  }
+                  // ...
                 },
                 markers: markers,
                 polylines: polylines,
@@ -341,7 +330,7 @@ class _RecordPageState extends State<RecordPage> {
                     (!started) ? '출발' : "도착",
                     style: TextStyle(
                       color: Colors.grey[850],
-                      fontSize: 20,
+                      fontSize: 15,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
@@ -357,7 +346,7 @@ class _RecordPageState extends State<RecordPage> {
                   "$digitHours:$digitMinutes:$digitSeconds",
                   style: TextStyle(
                     color: Colors.grey[850],
-                    fontSize: 50,
+                    fontSize: 40,
                     fontWeight: FontWeight.w400,
                   ),
                 ),
@@ -369,7 +358,7 @@ class _RecordPageState extends State<RecordPage> {
                     '리셋',
                     style: TextStyle(
                       color: Colors.grey[850],
-                      fontSize: 20,
+                      fontSize: 15,
                     ),
                   ),
                   style: ElevatedButton.styleFrom(
