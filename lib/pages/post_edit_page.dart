@@ -100,7 +100,9 @@ class _EditPostState extends State<EditPost> {
         .update(updatedData);
 
     // 수정이 완료되면 이전 화면으로 이동 또는 작업 완료 메시지 표시
-    Navigator.pop(context);
+    if (mounted) {
+      Navigator.pop(context);
+    }
   }
 
   Future<void> selectImage() async {

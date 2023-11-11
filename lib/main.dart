@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:geolocator/geolocator.dart';
 import 'package:running/auth/auth.dart';
 import 'package:running/firebase_options.dart';
+import 'package:running/pages/splash_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -26,7 +27,7 @@ class MyApp extends StatelessWidget {
     return MaterialApp(
       debugShowCheckedModeBanner: false,
       theme: ThemeData(fontFamily: 'JalnanGothic'),
-      home: AuthPage(),
+      home: SplashScreen(),
     );
   }
 }
