@@ -27,8 +27,9 @@ class _MyProfilePageState extends State<MyProfilePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
       appBar: AppBar(
-        backgroundColor: Colors.grey[50],
+        backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
         iconTheme: IconThemeData(color: Colors.grey[850]),
         title: Text(
           "마이페이지",
@@ -122,7 +123,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 style: TextStyle(
                                   fontSize: 15.0,
                                   color: !isJoinClick
-                                      ? Colors.blue[300]
+                                      ? Color.fromRGBO(79, 111, 82, 1.0)
                                       : Colors.grey[700],
                                 ),
                               ),
@@ -132,7 +133,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 width:
                                     MediaQuery.of(context).size.width / 2 - 38,
                                 color: !isJoinClick
-                                    ? Colors.blue[300]
+                                    ? Color.fromRGBO(79, 111, 82, 1.0)
                                     : Colors.grey[700],
                               )
                             ],
@@ -151,7 +152,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 style: TextStyle(
                                   fontSize: 15.0,
                                   color: isJoinClick
-                                      ? Colors.blue[300]
+                                      ? Color.fromRGBO(79, 111, 82, 1.0)
                                       : Colors.grey[700],
                                 ),
                               ),
@@ -161,7 +162,7 @@ class _MyProfilePageState extends State<MyProfilePage> {
                                 width:
                                     MediaQuery.of(context).size.width / 2 - 38,
                                 color: isJoinClick
-                                    ? Colors.blue[300]
+                                    ? Color.fromRGBO(79, 111, 82, 1.0)
                                     : Colors.grey[700],
                               ),
                             ],

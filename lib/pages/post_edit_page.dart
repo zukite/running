@@ -242,6 +242,7 @@ class _EditPostState extends State<EditPost> {
   Widget build(BuildContext context) {
     // EditPost 페이지의 내용을 구현하세요.
     return Scaffold(
+      backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
       appBar: AppBar(
         title: Text(
           '수정하기',
@@ -249,7 +250,7 @@ class _EditPostState extends State<EditPost> {
             color: Colors.grey[850],
           ),
         ),
-        backgroundColor: Colors.grey[50],
+        backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
         iconTheme: IconThemeData(color: Colors.grey[850]),
         elevation: 0,
       ),
@@ -265,7 +266,7 @@ class _EditPostState extends State<EditPost> {
               decoration: BoxDecoration(
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.blue),
+                border: Border.all(color: Color.fromRGBO(79, 111, 82, 1.0)),
               ),
               child: Stack(
                 alignment: Alignment.center,
@@ -305,11 +306,13 @@ class _EditPostState extends State<EditPost> {
                 controller: crewNameController,
                 decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blue),
+                    borderSide: const BorderSide(
+                        color: Color.fromRGBO(79, 111, 82, 1.0)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blue),
+                    borderSide: const BorderSide(
+                        color: Color.fromRGBO(79, 111, 82, 1.0)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   fillColor: Colors.grey[300],
@@ -331,11 +334,13 @@ class _EditPostState extends State<EditPost> {
                 controller: crewDescController,
                 decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blue),
+                    borderSide: const BorderSide(
+                        color: Color.fromRGBO(79, 111, 82, 1.0)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blue),
+                    borderSide: const BorderSide(
+                        color: Color.fromRGBO(79, 111, 82, 1.0)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   fillColor: Colors.grey[300],
@@ -359,11 +364,13 @@ class _EditPostState extends State<EditPost> {
                 controller: crewPeopleNumController,
                 decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blue),
+                    borderSide: const BorderSide(
+                        color: Color.fromRGBO(79, 111, 82, 1.0)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blue),
+                    borderSide: const BorderSide(
+                        color: Color.fromRGBO(79, 111, 82, 1.0)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   fillColor: Colors.grey[300],
@@ -386,11 +393,13 @@ class _EditPostState extends State<EditPost> {
                 controller: crewRegionController,
                 decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blue),
+                    borderSide: const BorderSide(
+                        color: Color.fromRGBO(79, 111, 82, 1.0)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blue),
+                    borderSide: const BorderSide(
+                        color: Color.fromRGBO(79, 111, 82, 1.0)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   fillColor: Colors.grey[300],
@@ -416,7 +425,7 @@ class _EditPostState extends State<EditPost> {
                 decoration: BoxDecoration(
                   color: Colors.grey[300],
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.blue),
+                  border: Border.all(color: Color.fromRGBO(79, 111, 82, 1.0)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
@@ -459,7 +468,7 @@ class _EditPostState extends State<EditPost> {
                 decoration: BoxDecoration(
                   color: Colors.grey[300],
                   borderRadius: BorderRadius.circular(10),
-                  border: Border.all(color: Colors.blue),
+                  border: Border.all(color: Color.fromRGBO(79, 111, 82, 1.0)),
                 ),
                 child: Padding(
                   padding: const EdgeInsets.all(10.0),
@@ -499,11 +508,13 @@ class _EditPostState extends State<EditPost> {
                 controller: crewUrlController,
                 decoration: InputDecoration(
                   enabledBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blue),
+                    borderSide: const BorderSide(
+                        color: Color.fromRGBO(79, 111, 82, 1.0)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   focusedBorder: OutlineInputBorder(
-                    borderSide: const BorderSide(color: Colors.blue),
+                    borderSide: const BorderSide(
+                        color: Color.fromRGBO(79, 111, 82, 1.0)),
                     borderRadius: BorderRadius.circular(10),
                   ),
                   fillColor: Colors.grey[300],
@@ -530,6 +541,7 @@ class _EditPostState extends State<EditPost> {
           style: ElevatedButton.styleFrom(
             elevation: 0,
             textStyle: TextStyle(fontSize: 15),
+            backgroundColor: Color.fromRGBO(79, 111, 82, 1.0),
           ),
         ),
       ),

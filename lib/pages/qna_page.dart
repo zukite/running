@@ -14,8 +14,9 @@ class _QnAPageState extends State<QnAPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
       appBar: AppBar(
-        backgroundColor: Colors.grey[50],
+        backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
         iconTheme: IconThemeData(color: Colors.grey[850]),
         title: Text(
           "질문 게시판",

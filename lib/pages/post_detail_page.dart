@@ -206,6 +206,7 @@ class _PostDetailState extends State<PostDetail> {
     final isCurrentUserAuthor = isAuthor;
 
     return Scaffold(
+      backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
       appBar: AppBar(
         title: Text(
           widget.postData['crewName'],
@@ -213,7 +214,7 @@ class _PostDetailState extends State<PostDetail> {
             color: Colors.grey[850],
           ),
         ),
-        backgroundColor: Colors.grey[50],
+        backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
         elevation: 0,
         centerTitle: true,
         iconTheme: IconThemeData(color: Colors.grey[850]),
@@ -355,7 +356,10 @@ class _PostDetailState extends State<PostDetail> {
           onPressed: _launchURL,
           child: Text("가입하기"),
           style: ElevatedButton.styleFrom(
-              elevation: 0, textStyle: TextStyle(fontSize: 15)),
+            elevation: 0,
+            textStyle: TextStyle(fontSize: 15),
+            backgroundColor: Color.fromRGBO(79, 111, 82, 1.0),
+          ),
         ),
       ),
     );

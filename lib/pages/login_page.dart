@@ -67,7 +67,7 @@ class _LoginPageState extends State<LoginPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: Colors.grey[300],
+      backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
       body: SafeArea(
         child: Center(
           child: SingleChildScrollView(
@@ -76,22 +76,10 @@ class _LoginPageState extends State<LoginPage> {
               child: Column(
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: [
-                  // 로고
-                  const Icon(
-                    Icons.directions_run,
-                    size: 100.0,
+                  Image.asset(
+                    'assets/logo.jpg',
+                    width: MediaQuery.of(context).size.width / 3 * 2,
                   ),
-                  const SizedBox(height: 15),
-
-                  // 앱 이름
-                  const Text(
-                    "같이 뛸래?",
-                    style: TextStyle(fontSize: 30),
-                  ),
-                  // const Text(
-                  //   "CREW",
-                  //   style: TextStyle(fontSize: 30),
-                  // ),
                   const SizedBox(height: 25),
                   MyTextField(
                     controller: emailTextController,
@@ -122,8 +110,8 @@ class _LoginPageState extends State<LoginPage> {
                         child: const Text(
                           "회원가입",
                           style: TextStyle(
-                            fontWeight: FontWeight.bold,
-                            color: Colors.blue,
+                            // fontWeight: FontWeight.bold,
+                            color: Color.fromRGBO(79, 111, 82, 1.0),
                           ),
                         ),
                       )

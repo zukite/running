@@ -13,7 +13,12 @@ class MyTextBox extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
         decoration: BoxDecoration(
-            color: Colors.grey[200], borderRadius: BorderRadius.circular(8)),
+          color: Colors.grey[300],
+          borderRadius: BorderRadius.circular(8),
+          border: Border.all(
+            color: Color.fromRGBO(79, 111, 82, 1.0), // 원하는 테두리 색상으로 변경
+          ),
+        ),
         padding: const EdgeInsets.only(
           left: 15,
           bottom: 5,
@@ -30,13 +35,13 @@ class MyTextBox extends StatelessWidget {
           children: [
             Text(
               text,
-              style: TextStyle(color: Colors.grey[800]),
+              style: TextStyle(color: Colors.grey[850]),
             ),
             IconButton(
               onPressed: onPressed,
               icon: Icon(
                 Icons.edit,
-                color: Colors.grey[800],
+                color: Colors.grey[600],
               ),
             ),
           ],

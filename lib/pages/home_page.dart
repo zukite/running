@@ -82,8 +82,9 @@ class _MyHomePageState extends State<MyHomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
       appBar: AppBar(
-        backgroundColor: Colors.grey[50],
+        backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
         elevation: 0,
         title: StreamBuilder(
           stream: FirebaseFirestore.instance
@@ -92,7 +93,9 @@ class _MyHomePageState extends State<MyHomePage> {
               .snapshots(),
           builder: (context, snapshot) {
             if (snapshot.hasData) {
-              final userData = snapshot.data!.data() as Map<String, dynamic>;
+              final userData =
+                  (snapshot.data?.data() as Map<String, dynamic>?) ?? {};
+
               return Text(
                 userData['userregion'],
                 style: TextStyle(color: Colors.grey[850]),
@@ -152,14 +155,18 @@ class _MyHomePageState extends State<MyHomePage> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
-                          color: isClick ? Colors.blue : Colors.grey,
+                          color: isClick
+                              ? Color.fromRGBO(79, 111, 82, 1.0)
+                              : Colors.grey,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Container(
                         height: 2.0,
                         width: MediaQuery.of(context).size.width / 2 - 8,
-                        color: isClick ? Colors.blue : Colors.grey,
+                        color: isClick
+                            ? Color.fromRGBO(79, 111, 82, 1.0)
+                            : Colors.grey,
                       ),
                     ],
                   ),
@@ -177,14 +184,18 @@ class _MyHomePageState extends State<MyHomePage> {
                         style: TextStyle(
                           fontSize: 16,
                           fontWeight: FontWeight.w500,
-                          color: !isClick ? Colors.blue : Colors.grey,
+                          color: !isClick
+                              ? Color.fromRGBO(79, 111, 82, 1.0)
+                              : Colors.grey,
                         ),
                       ),
                       const SizedBox(height: 8),
                       Container(
                         height: 2.0,
                         width: MediaQuery.of(context).size.width / 2 - 8,
-                        color: !isClick ? Colors.blue : Colors.grey,
+                        color: !isClick
+                            ? Color.fromRGBO(79, 111, 82, 1.0)
+                            : Colors.grey,
                       ),
                     ],
                   ),
@@ -241,6 +252,7 @@ class _MyHomePageState extends State<MyHomePage> {
                 );
               },
               elevation: 0.0,
+              backgroundColor: Color.fromRGBO(79, 111, 82, 1.0),
               child: const Icon(Icons.add),
             )
           : null,

@@ -90,8 +90,9 @@ class _AddQnaState extends State<AddQna> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
       appBar: AppBar(
-        backgroundColor: Colors.grey[50],
+        backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
         iconTheme: IconThemeData(color: Colors.grey[850]),
         title: Text(
           "글 쓰기",
@@ -117,6 +118,10 @@ class _AddQnaState extends State<AddQna> {
                 controller: titleController, // 컨트롤러를 연결
                 decoration: const InputDecoration(
                   hintText: '제목',
+                  focusedBorder: UnderlineInputBorder(
+                    borderSide: BorderSide(
+                        color: Color.fromRGBO(79, 111, 82, 1.0)), // 원하는 색상으로 설정
+                  ),
                 ),
               ),
             ),

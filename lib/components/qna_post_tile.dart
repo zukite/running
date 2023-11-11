@@ -25,7 +25,7 @@ class QnaPostTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 4),
       child: Card(
-        color: Colors.grey[50],
+        color: Color.fromRGBO(243, 238, 234, 1.0),
         elevation: 0.7, // 그림자 제거
 
         child: ListTile(
@@ -35,9 +35,13 @@ class QnaPostTile extends StatelessWidget {
             title,
             textAlign: TextAlign.left, // Text 정렬 왼쪽으로 설정
           ),
+
           subtitle: Column(
             crossAxisAlignment: CrossAxisAlignment.start, // 왼쪽 정렬
             children: [
+              SizedBox(
+                height: 8,
+              ),
               Text(
                 subtitle, // subtitle을 한 줄로 표시
                 overflow: TextOverflow.ellipsis, // 오버플로우 발생 시 ...으로 표시

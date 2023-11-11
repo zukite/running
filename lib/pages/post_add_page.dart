@@ -195,6 +195,7 @@ class _MyAddCrewState extends State<MyAddCrew> {
 
   Future<void> showLocationPickDialog({required bool isStartLocation}) async {
     LatLng? selectedLocation;
+    String? selectedAddress;
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -224,6 +225,8 @@ class _MyAddCrewState extends State<MyAddCrew> {
                         ),
                       );
                     });
+                    // 선택된 위치에 대한 주소 가져오기
+                    selectedAddress = await _getAddress(selectedLocation!);
                   },
                   markers: _markers,
                 ),
@@ -338,8 +341,9 @@ class _MyAddCrewState extends State<MyAddCrew> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
       appBar: AppBar(
-        backgroundColor: Colors.grey[50],
+        backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
         iconTheme: IconThemeData(
           color: Colors.grey[850],
         ),
@@ -368,7 +372,8 @@ class _MyAddCrewState extends State<MyAddCrew> {
                         decoration: BoxDecoration(
                           color: Colors.grey[300],
                           borderRadius: BorderRadius.circular(10),
-                          border: Border.all(color: Colors.blue),
+                          border: Border.all(
+                              color: Color.fromRGBO(79, 111, 82, 1.0)),
                         ),
                         child: ClipRRect(
                           borderRadius: BorderRadius.circular(10.0),
@@ -387,7 +392,8 @@ class _MyAddCrewState extends State<MyAddCrew> {
                       decoration: BoxDecoration(
                         color: Colors.grey[300],
                         borderRadius: BorderRadius.circular(10),
-                        border: Border.all(color: Colors.blue),
+                        border:
+                            Border.all(color: Color.fromRGBO(79, 111, 82, 1.0)),
                       ),
                       child: IconButton(
                         icon: Icon(
@@ -406,11 +412,13 @@ class _MyAddCrewState extends State<MyAddCrew> {
                   controller: crewNameController,
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.blue),
+                      borderSide: const BorderSide(
+                          color: Color.fromRGBO(79, 111, 82, 1.0)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.blue),
+                      borderSide: const BorderSide(
+                          color: Color.fromRGBO(79, 111, 82, 1.0)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     fillColor: Colors.grey[300],
@@ -435,11 +443,13 @@ class _MyAddCrewState extends State<MyAddCrew> {
                   controller: crewDescController,
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.blue),
+                      borderSide: const BorderSide(
+                          color: Color.fromRGBO(79, 111, 82, 1.0)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.blue),
+                      borderSide: const BorderSide(
+                          color: Color.fromRGBO(79, 111, 82, 1.0)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     fillColor: Colors.grey[300],
@@ -466,16 +476,21 @@ class _MyAddCrewState extends State<MyAddCrew> {
                   controller: crewPeopleNumController,
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.blue),
+                      borderSide: const BorderSide(
+                          color: Color.fromRGBO(79, 111, 82, 1.0)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.blue),
+                      borderSide: const BorderSide(
+                          color: Color.fromRGBO(79, 111, 82, 1.0)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     fillColor: Colors.grey[300],
                     filled: true,
-                    prefixIcon: const Icon(Icons.people),
+                    prefixIcon: Icon(
+                      Icons.people,
+                      color: Colors.grey[600],
+                    ),
                     hintText: "참여 가능한 인원",
                     hintStyle: TextStyle(
                       color: Colors.grey[500],
@@ -499,7 +514,7 @@ class _MyAddCrewState extends State<MyAddCrew> {
                   decoration: BoxDecoration(
                     color: Colors.grey[300],
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.blue),
+                    border: Border.all(color: Color.fromRGBO(79, 111, 82, 1.0)),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -542,7 +557,7 @@ class _MyAddCrewState extends State<MyAddCrew> {
                   decoration: BoxDecoration(
                     color: Colors.grey[300],
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.blue),
+                    border: Border.all(color: Color.fromRGBO(79, 111, 82, 1.0)),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -586,7 +601,7 @@ class _MyAddCrewState extends State<MyAddCrew> {
                   decoration: BoxDecoration(
                     color: Colors.grey[300],
                     borderRadius: BorderRadius.circular(10),
-                    border: Border.all(color: Colors.blue),
+                    border: Border.all(color: Color.fromRGBO(79, 111, 82, 1.0)),
                   ),
                   child: Padding(
                     padding: const EdgeInsets.all(10.0),
@@ -627,11 +642,13 @@ class _MyAddCrewState extends State<MyAddCrew> {
                   controller: crewUrlController,
                   decoration: InputDecoration(
                     enabledBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.blue),
+                      borderSide: const BorderSide(
+                          color: Color.fromRGBO(79, 111, 82, 1.0)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     focusedBorder: OutlineInputBorder(
-                      borderSide: const BorderSide(color: Colors.blue),
+                      borderSide: const BorderSide(
+                          color: Color.fromRGBO(79, 111, 82, 1.0)),
                       borderRadius: BorderRadius.circular(10),
                     ),
                     fillColor: Colors.grey[300],
@@ -663,6 +680,7 @@ class _MyAddCrewState extends State<MyAddCrew> {
           style: ElevatedButton.styleFrom(
             elevation: 0,
             textStyle: TextStyle(fontSize: 15),
+            backgroundColor: Color.fromRGBO(79, 111, 82, 1.0),
           ),
         ),
       ),

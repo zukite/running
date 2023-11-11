@@ -21,7 +21,7 @@ class MyRecordTile extends StatelessWidget {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 1, horizontal: 4),
       child: Card(
-        color: Colors.grey[50],
+        color: Color.fromRGBO(243, 238, 234, 1.0),
         elevation: 0.5,
         child: ListTile(
           title: Row(

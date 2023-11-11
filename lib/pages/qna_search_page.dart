@@ -47,8 +47,9 @@ class _qnaSearchState extends State<qnaSearch> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
       appBar: AppBar(
-        backgroundColor: Colors.grey[50],
+        backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
         iconTheme: IconThemeData(
           color: Colors.grey[850],
         ),
@@ -72,17 +73,22 @@ class _qnaSearchState extends State<qnaSearch> {
                   color: Colors.grey[500],
                 ),
                 enabledBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
+                  borderSide:
+                      BorderSide(color: Color.fromRGBO(79, 111, 82, 1.0)),
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                 ),
                 focusedBorder: const OutlineInputBorder(
-                  borderSide: BorderSide(color: Colors.white),
+                  borderSide:
+                      BorderSide(color: Color.fromRGBO(79, 111, 82, 1.0)),
                   borderRadius: BorderRadius.all(Radius.circular(10)),
                 ),
-                fillColor: Colors.grey.shade200,
+                fillColor: Colors.grey[300],
                 filled: true,
                 suffixIcon: IconButton(
-                  icon: const Icon(Icons.search),
+                  icon: Icon(
+                    Icons.search,
+                    color: Colors.grey[600],
+                  ),
                   onPressed: () {
                     _searchPosts(_searchController.text);
                   },

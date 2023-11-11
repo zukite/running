@@ -40,14 +40,21 @@ class _MyProfileModifyState extends State<MyProfileModify> {
       builder: (context) => AlertDialog(
         title: Text(
           "$field 수정하기",
-          style: const TextStyle(color: Colors.grey),
+          style: TextStyle(color: Colors.grey[850]),
         ),
         content: TextField(
           autofocus: true,
-          style: TextStyle(color: Colors.grey[850]),
+          style: TextStyle(
+            color: Colors.grey[850],
+            decorationColor: Color.fromRGBO(79, 111, 82, 1.0),
+          ),
           decoration: InputDecoration(
             hintText: "$field(을)를 입력하세요. ",
-            hintStyle: const TextStyle(color: Colors.grey),
+            hintStyle: TextStyle(color: Colors.grey),
+            focusedBorder: UnderlineInputBorder(
+              borderSide: BorderSide(
+                  color: Color.fromRGBO(79, 111, 82, 1.0)), // 원하는 색상으로 변경
+            ),
           ),
           onChanged: (value) {
             newValue = value;
@@ -277,8 +284,9 @@ class _MyProfileModifyState extends State<MyProfileModify> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
       appBar: AppBar(
-        backgroundColor: Colors.grey[50],
+        backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
         iconTheme: IconThemeData(
           color: Colors.grey[850],
         ),
@@ -352,7 +360,7 @@ class _MyProfileModifyState extends State<MyProfileModify> {
                 ),
                 MyTextBox(
                   text: userData["username"],
-                  onPressed: () => editField('username'),
+                  onPressed: () => editField('닉네임'),
                 ),
                 const SizedBox(
                   height: 30,

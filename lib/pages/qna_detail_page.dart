@@ -1,8 +1,10 @@
+import 'dart:ffi';
 import 'dart:math';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
+import 'package:intl/intl.dart';
 import 'package:running/components/comment_list.dart';
 import 'package:running/components/text_field.dart';
 import 'package:running/pages/qna_edit_page.dart';
@@ -111,17 +113,29 @@ class _QnaDetailState extends State<QnaDetail> {
     }
   }
 
+  String _formatTimestamp(Timestamp timestamp) {
+    // Timestamp를 DateTime으로 변환
+    DateTime dateTime = timestamp.toDate();
+
+    // DateFormat을 사용하여 날짜와 시간을 원하는 형식으로 포맷
+    String formattedDateTime = DateFormat('MM/dd  hh:mm').format(dateTime);
+
+    return formattedDateTime;
+  }
+
   @override
   Widget build(BuildContext context) {
     final isAuthor = widget.currentUser?.uid == widget.postData['authorUid'];
     final isCurrentUserAuthor = isAuthor;
+
     return Scaffold(
+      backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
       appBar: AppBar(
         title: Text(
           "질문 게시판",
           style: TextStyle(color: Colors.grey[850]),
         ),
-        backgroundColor: Colors.grey[50],
+        backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
         elevation: 0,
         iconTheme: IconThemeData(color: Colors.grey[850]),
         actions: [
@@ -193,16 +207,28 @@ class _QnaDetailState extends State<QnaDetail> {
                           Text(
                             widget.postData['title'],
                             style: const TextStyle(
-                              fontWeight: FontWeight.bold,
+                              // fontWeight: FontWeight.bold,
                               fontSize: 25,
                             ),
                           ),
-                          const SizedBox(height: 13),
+                          const SizedBox(height: 15),
                           Text(
                             widget.postData['desc'],
                             style: const TextStyle(fontSize: 15),
                           ),
-                          const SizedBox(height: 10),
+                          const SizedBox(height: 20),
+                          Text(
+                            widget.postData['authorName'],
+                            style: TextStyle(
+                              color: Colors.grey[600], // timestamp의 글꼴 색상 설정
+                            ),
+                          ),
+                          Text(
+                            '${_formatTimestamp(widget.postData['timestamp'])}',
+                            style: TextStyle(
+                              color: Colors.grey[400], // timestamp의 글꼴 색상 설정
+                            ),
+                          ),
                           Container(
                             width: double.infinity,
                             height: 0.8, // 테두리의 높이

@@ -99,7 +99,8 @@ class _RecordPageState extends State<RecordPage> {
   }
 
   // Directions API 키
-  final String apiKey = 'YOUR_API_KEY_HERE'; // Directions API 키를 채워 넣으세요
+  final String apiKey =
+      'AIzaSyAGDQo5OmDqTQHEXLELWl2Oufi5onik1hs'; // Directions API 키를 채워 넣으세요
 
   final currentUser = FirebaseAuth.instance.currentUser;
   FirebaseFirestore firestore = FirebaseFirestore.instance;
@@ -145,8 +146,9 @@ class _RecordPageState extends State<RecordPage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
       appBar: AppBar(
-        backgroundColor: Colors.grey[50],
+        backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
         iconTheme: IconThemeData(color: Colors.grey[850]),
         title: Text(
           "기록하기",
@@ -184,7 +186,39 @@ class _RecordPageState extends State<RecordPage> {
                 ),
                 myLocationEnabled: true, // 이 부분을 추가
                 onTap: (LatLng location) async {
-                  // ...
+                  List<Placemark> placemarks = await placemarkFromCoordinates(
+                      location.latitude, location.longitude);
+                  if (placemarks.isNotEmpty) {
+                    Placemark placemark = placemarks[0];
+                    String address = placemark.street ?? "";
+                    setState(() {
+                      if (startLocationText == "출발위치") {
+                        startLocationText = "$address";
+                        markers.add(
+                          Marker(
+                            markerId: MarkerId('start'),
+                            position: location,
+                            infoWindow: InfoWindow(title: '출발 위치'),
+                            icon: BitmapDescriptor.defaultMarkerWithHue(
+                                BitmapDescriptor.hueGreen),
+                          ),
+                        );
+                      } else {
+                        destinationLocationText = "$address";
+                        markers.add(
+                          Marker(
+                            markerId: MarkerId('destination'),
+                            position: location,
+                            infoWindow: InfoWindow(title: '도착 위치'),
+                            icon: BitmapDescriptor.defaultMarkerWithHue(
+                                BitmapDescriptor.hueRed),
+                          ),
+                        );
+                        // 경로 그리기
+                        _drawRoute();
+                      }
+                    });
+                  }
                 },
                 markers: markers,
                 polylines: polylines,
@@ -198,7 +232,7 @@ class _RecordPageState extends State<RecordPage> {
               decoration: BoxDecoration(
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.blue),
+                border: Border.all(color: Color.fromRGBO(79, 111, 82, 1.0)),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -238,7 +272,7 @@ class _RecordPageState extends State<RecordPage> {
               decoration: BoxDecoration(
                 color: Colors.grey[300],
                 borderRadius: BorderRadius.circular(10),
-                border: Border.all(color: Colors.blue),
+                border: Border.all(color: Color.fromRGBO(79, 111, 82, 1.0)),
               ),
               child: Padding(
                 padding: const EdgeInsets.all(10.0),
@@ -287,10 +321,12 @@ class _RecordPageState extends State<RecordPage> {
                         context: context,
                         builder: (context) {
                           return AlertDialog(
+                            backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
                             title: Center(child: Text('시간 기록')),
                             content: Container(
                               width: 200, // 원하는 폭으로 설정
                               height: 150, // 원하는 높이로 설정
+
                               child: Center(
                                 child: Text(
                                   '$digitHours:$digitMinutes:$digitSeconds',
@@ -337,8 +373,9 @@ class _RecordPageState extends State<RecordPage> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0), // 반지름 설정
                     ),
-                    backgroundColor: Colors.grey[50], // 배경색 설정
-                    side: BorderSide(color: Colors.blue),
+                    backgroundColor:
+                        Color.fromRGBO(243, 238, 234, 1.0), // 배경색 설정
+                    side: BorderSide(color: Color.fromRGBO(79, 111, 82, 1.0)),
                     elevation: 0, // 테두리색과 두께 설정
                   ),
                 ),
@@ -365,8 +402,9 @@ class _RecordPageState extends State<RecordPage> {
                     shape: RoundedRectangleBorder(
                       borderRadius: BorderRadius.circular(20.0), // 반지름 설정
                     ),
-                    backgroundColor: Colors.grey[50], // 배경색 설정
-                    side: BorderSide(color: Colors.blue),
+                    backgroundColor:
+                        Color.fromRGBO(243, 238, 234, 1.0), // 배경색 설정
+                    side: BorderSide(color: Color.fromRGBO(79, 111, 82, 1.0)),
                     elevation: 0, // 테두리색과 두께 설정
                   ),
                 ),
