@@ -209,6 +209,7 @@ class _MyAddCrewState extends State<MyAddCrew> {
                     target: LatLng(37.7749, -122.4194),
                     zoom: 10,
                   ),
+                  myLocationEnabled: true,
                   onMapCreated: (controller) {
                     setState(() {
                       _mapController = controller;
