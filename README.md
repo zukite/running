@@ -1,6 +1,6 @@
-# running
+# 런런(RunRun)
 
-A new Flutter project.
+러닝 크루 모집 어플리케이션
 
 ## Getting Started
 
