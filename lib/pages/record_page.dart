@@ -181,7 +181,7 @@ class _RecordPageState extends State<RecordPage> {
                   mapController = controller;
                 },
                 initialCameraPosition: CameraPosition(
-                  target: LatLng(37.7749, -122.4194), // 초기 위치를 설정해도 됨
+                  target: LatLng(36.615987, 127.011949), // 초기 위치를 설정해도 됨
                   zoom: 15.0,
                 ),
                 myLocationEnabled: true, // 이 부분을 추가

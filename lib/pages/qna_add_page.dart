@@ -27,7 +27,6 @@ class _AddQnaState extends State<AddQna> {
       length, (_) => _chars.codeUnitAt(_rnd.nextInt(_chars.length))));
 
   void postQnA() async {
-    print("postQnA function called"); // 이 줄 추가
     showDialog(
       context: context,
       builder: (context) => const Center(

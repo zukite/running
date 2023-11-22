@@ -6,6 +6,7 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
 import 'package:geocoding/geocoding.dart';
+import 'package:geolocator/geolocator.dart';
 import 'package:google_maps_flutter/google_maps_flutter.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:running/pages/home_page.dart';
@@ -196,6 +197,12 @@ class _MyAddCrewState extends State<MyAddCrew> {
   Future<void> showLocationPickDialog({required bool isStartLocation}) async {
     LatLng? selectedLocation;
     String? selectedAddress;
+
+    // 현재 위치 가져오기
+    Position position = await Geolocator.getCurrentPosition(
+      desiredAccuracy: LocationAccuracy.high,
+    );
+
     await showDialog(
       context: context,
       builder: (BuildContext context) {
@@ -203,11 +210,13 @@ class _MyAddCrewState extends State<MyAddCrew> {
           builder: (context, setState) {
             return AlertDialog(
               content: Container(
-                height: 300, // Adjust the height as needed
+                height: MediaQuery.of(context).size.height /
+                    3, // Adjust the height as needed
+                width: MediaQuery.of(context).size.width / 2,
                 child: GoogleMap(
                   initialCameraPosition: CameraPosition(
-                    target: LatLng(37.7749, -122.4194),
-                    zoom: 10,
+                    target: LatLng(position.latitude, position.longitude),
+                    zoom: 15,
                   ),
                   myLocationEnabled: true,
                   onMapCreated: (controller) {
