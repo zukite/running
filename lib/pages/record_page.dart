@@ -324,8 +324,8 @@ class _RecordPageState extends State<RecordPage> {
                             backgroundColor: Color.fromRGBO(243, 238, 234, 1.0),
                             title: Center(child: Text('시간 기록')),
                             content: Container(
-                              width: 200, // 원하는 폭으로 설정
-                              height: 150, // 원하는 높이로 설정
+                              width: 250, // 원하는 폭으로 설정
+                              height: 200, // 원하는 높이로 설정
 
                               child: Center(
                                 child: Text(
